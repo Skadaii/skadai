@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TurretAgent : MonoBehaviour, IDamageable
+public class TurretAgent : Agent, IDamageable
 {
-    [SerializeField]
-    int MaxHP = 100;
     [SerializeField]
     float BulletPower = 1000f;
     [SerializeField]
@@ -18,22 +16,13 @@ public class TurretAgent : MonoBehaviour, IDamageable
 
     Transform GunTransform;
 
-    bool IsDead = false;
-    int CurrentHP;
-
     GameObject Target = null;
 
-    public void AddDamage(int amount)
+    protected override void OnDeath()
     {
-        CurrentHP -= amount;
-        if (CurrentHP <= 0)
-        {
-            IsDead = true;
-            CurrentHP = 0;
-
-            gameObject.SetActive(false);
-        }
+        gameObject.SetActive(false);
     }
+
     void ShootToPosition(Vector3 pos)
     {
         // look at target position

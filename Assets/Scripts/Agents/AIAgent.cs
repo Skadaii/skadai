@@ -4,11 +4,9 @@ using UnityEngine.UI;
 
 namespace FSMMono
 {
-    public class AIAgent : MonoBehaviour, IDamageable
+    public class AIAgent : Agent, IDamageable
     {
 
-        [SerializeField]
-        int MaxHP = 100;
         [SerializeField]
         float BulletPower = 1000f;
         [SerializeField]
@@ -20,9 +18,6 @@ namespace FSMMono
         Transform GunTransform;
         NavMeshAgent NavMeshAgentInst;
         Material MaterialInst;
-
-        bool IsDead = false;
-        int CurrentHP;
 
         private void SetMaterial(Color col)
         {
@@ -91,21 +86,14 @@ namespace FSMMono
         #endregion
 
         #region ActionMethods
-
-        public void AddDamage(int amount)
+        protected override void OnHealthChange()
         {
-            CurrentHP -= amount;
-            if (CurrentHP <= 0)
-            {
-                IsDead = true;
-                CurrentHP = 0;
-            }
-
             if (HPSlider != null)
             {
                 HPSlider.value = CurrentHP;
             }
         }
+
         void ShootToPosition(Vector3 pos)
         {
             // look at target position

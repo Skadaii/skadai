@@ -16,10 +16,14 @@ public class SimpleController : MonoBehaviour
     private Action<Vector3> OnMouseLeftClicked;
     private Action<Vector3> OnMouseRightClicked;
 
+    private Movement movement;
+
     void Start ()
     {
         Player = GetComponent<PlayerAgent>();
-		viewCamera = Camera.main;
+        movement = GetComponent<Movement>();
+
+        viewCamera = Camera.main;
 
         OnMouseLeftClicked += Player.ShootToPosition;
         OnMouseRightClicked += Player.NPCShootToPosition;
@@ -52,6 +56,6 @@ public class SimpleController : MonoBehaviour
     }
 	void FixedUpdate()
     {
-        Player.MoveToward(velocity);
+        movement.MoveToward(velocity);
 	}
 }
