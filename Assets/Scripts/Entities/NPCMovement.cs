@@ -15,7 +15,7 @@ public class NPCMovement : Movement
 
     private void Update()
     {
-        if (TransformTarget is not null)
+        if (TransformTarget)
             MoveTo(TransformTarget.position);
     }
 
