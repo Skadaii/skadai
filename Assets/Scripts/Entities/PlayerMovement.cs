@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerMovement : Movement
 {
-    Rigidbody rb;
+    Rigidbody rb = null;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();

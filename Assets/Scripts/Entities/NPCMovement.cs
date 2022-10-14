@@ -1,18 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class NPCMovement : Movement
 {
-    // Start is called before the first frame update
-    void Start()
+    private NavMeshAgent m_NavAgent = null;
+
+    void Awake()
     {
-        
+        m_NavAgent = GetComponent<NavMeshAgent>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (TransformTarget is not null)
+            MoveTo(TransformTarget.position);
+    }
+
+    public override void MoveTo(Vector3 target)
+    {
+        base.MoveTo(target);
+        m_NavAgent.SetDestination(target);
+    }
+
+    public override void MoveToward(Vector3 velocity)
+    {
+        TransformTarget = null;
+        PositionTarget = null;
+
+        m_NavAgent.Move(velocity);
     }
 }

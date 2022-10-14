@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
 
-public class SimpleController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     float moveSpeed = 6f;
