@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerAgent : Agent, IDamageable
+public class PlayerAgent : Agent
 {
     [SerializeField]
     float BulletPower = 1000f;

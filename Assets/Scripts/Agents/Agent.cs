@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Agent : MonoBehaviour
+public class Agent : MonoBehaviour, IDamageable
 {
     [SerializeField]
     protected int MaxHP = 100;
