@@ -98,6 +98,7 @@ GameObject:
   - component: {fileID: 5565563887930918642}
   - component: {fileID: 614356075419529752}
   - component: {fileID: 2373518032967929778}
+  - component: {fileID: 954485431784399736}
   m_Layer: 7
   m_Name: AIAgent
   m_TagString: Untagged
@@ -214,6 +215,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movement: {fileID: 0}
+--- !u!136 &954485431784399736
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5565563887930918629}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5000001
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5565563888361350084
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,16 +5,9 @@ using UnityEngine;
 public class TurretAgent : Agent, IDamageable
 {
     [SerializeField]
-    float BulletPower = 1000f;
-    [SerializeField]
-    GameObject BulletPrefab;
-
-    [SerializeField]
     float ShootFrequency = 1f;
 
     float NextShootDate = 0f;
-
-    Transform GunTransform;
 
     GameObject Target = null;
 
@@ -23,19 +16,6 @@ public class TurretAgent : Agent, IDamageable
         gameObject.SetActive(false);
     }
 
-    void ShootToPosition(Vector3 pos)
-    {
-        // look at target position
-        transform.LookAt(pos + Vector3.up * transform.position.y);
-
-        // instantiate bullet
-        if (BulletPrefab)
-        {
-            GameObject bullet = Instantiate<GameObject>(BulletPrefab, GunTransform.position + transform.forward * 0.5f, Quaternion.identity);
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * BulletPower);
-        }
-    }
     void Start()
     {
         GunTransform = transform.Find("Body/Gun");

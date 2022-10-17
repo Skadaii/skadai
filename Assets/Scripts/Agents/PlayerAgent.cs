@@ -6,11 +6,6 @@ using UnityEngine.UI;
 public class PlayerAgent : Agent
 {
     [SerializeField]
-    float BulletPower = 1000f;
-    [SerializeField]
-    GameObject BulletPrefab;
-
-    [SerializeField]
     GameObject TargetCursorPrefab = null;
     [SerializeField]
     GameObject NPCTargetCursorPrefab = null;
@@ -20,20 +15,26 @@ public class PlayerAgent : Agent
 
     GameObject TargetCursor = null;
     GameObject NPCTargetCursor = null;
-    Transform GunTransform;
+
+    public UnitLeader leader = null;
+
+    private void Awake()
+    {
+        leader = GetComponent<UnitLeader>();
+    }
 
     private GameObject GetTargetCursor()
     {
         if (TargetCursor == null)
             TargetCursor = Instantiate(TargetCursorPrefab);
+
         return TargetCursor;
     }
     private GameObject GetNPCTargetCursor()
     {
         if (NPCTargetCursor == null)
-        {
             NPCTargetCursor = Instantiate(NPCTargetCursorPrefab);
-        }
+
         return NPCTargetCursor;
     }
     public void AimAtPosition(Vector3 pos)
@@ -42,19 +43,12 @@ public class PlayerAgent : Agent
         if (Vector3.Distance(transform.position, pos) > 2.5f)
             transform.LookAt(pos + Vector3.up * transform.position.y);
     }
-    public void ShootToPosition(Vector3 pos)
-    {
-        // instantiate bullet
-        if (BulletPrefab)
-        {
-            GameObject bullet = Instantiate<GameObject>(BulletPrefab, GunTransform.position + transform.forward * 0.5f, Quaternion.identity);
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * BulletPower);
-        }
-    }
+
     public void NPCShootToPosition(Vector3 pos)
     {
         GetNPCTargetCursor().transform.position = pos;
+
+        leader.m_Squad.ShootToPosition(pos);
     }
 
     protected override void OnHealthChange()
@@ -72,18 +66,15 @@ public class PlayerAgent : Agent
     #region MonoBehaviour Methods
     void Start()
     {
-        CurrentHP = MaxHP;
         GunTransform = transform.Find("Gun");
+
+        CurrentHP = MaxHP;
 
         if (HPSlider != null)
         {
             HPSlider.maxValue = MaxHP;
             HPSlider.value = CurrentHP;
         }
-    }
-    void Update()
-    {
-        
     }
 
     #endregion

@@ -8,12 +8,6 @@ namespace FSMMono
     [RequireComponent(typeof(SphereCollider))]
     public class AIAgent : Agent
     {
-
-        [SerializeField]
-        float BulletPower = 1000f;
-        [SerializeField]
-        GameObject BulletPrefab;
-
         [SerializeField]
         Slider HPSlider = null;
 
@@ -26,7 +20,6 @@ namespace FSMMono
         [SerializeField]
         float PrivacyRadius = 2f;
 
-        Transform GunTransform;
         NavMeshAgent NavMeshAgentInst;
         Material MaterialInst;
 
@@ -152,19 +145,12 @@ namespace FSMMono
             }
         }
 
-        void ShootToPosition(Vector3 pos)
+        public override void ShootToPosition(Vector3 pos)
         {
-            // look at target position
             transform.LookAt(pos + Vector3.up * transform.position.y);
-
-            // instantiate bullet
-            if (BulletPrefab)
-            {
-                GameObject bullet = Instantiate<GameObject>(BulletPrefab, GunTransform.position + transform.forward * 0.5f, Quaternion.identity);
-                Rigidbody rb = bullet.GetComponent<Rigidbody>();
-                rb.AddForce(transform.forward * BulletPower);
-            }
+            base.ShootToPosition(pos);
         }
+
         #endregion
     }
 }
