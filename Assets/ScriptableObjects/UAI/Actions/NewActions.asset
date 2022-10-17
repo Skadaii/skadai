@@ -12,3 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23617511fcc63e04f9b24d270b813130, type: 3}
   m_Name: NewActions
   m_EditorClassIdentifier: 
+  actions:
+  - actionName: TestAction
+    show: 1
+    methods:
+    - ComponentIndex: 3
+      MethodIndex: 0
+      show: 1

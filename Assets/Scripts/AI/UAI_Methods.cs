@@ -1,28 +1,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Reflection;
+using System;
 
-public class UAI_Methods : ISerializationCallbackReceiver
+[System.Serializable]
+public class UAI_Method
 {
-    private MethodInfo MethodInfo;
+    public MethodInfo MethodInfo;
 
-    public static List<string> StaticComponentsName = new List<string>();
-    [HideInInspector] public List<string> ComponentsName = new List<string>();
+    public int ComponentIndex;
+    public int MethodIndex;
 
-    [CustomDropdown(typeof(UAI_Methods), "StaticComponentsName")]
-    public string ComponentName;
+    public bool Show = false;
 
-    public static List<string> StaticMethodsName = new List<string>();
-    [HideInInspector] public List<string> MethodsName = new List<string>();
+    public List<object> Args = new List<object>();
 
-    [CustomDropdown(typeof(UAI_Methods), "StaticMethodsName")]
-    public string MethodName;
-
-    public void OnBeforeSerialize()
+    public void UpdateMethodInfo(string componentName, string methodName, UtilityAI utilityAI)
     {
-        StaticComponentsName = ComponentsName;
-        StaticMethodsName = MethodsName;
-    }
+        Component component = utilityAI.GetComponent(componentName);
+        MethodInfo = component.GetType().GetMethod(methodName);
 
-    public void OnAfterDeserialize() { }
+        Type[] args = MethodInfo.GetGenericArguments();
+
+        foreach (Type arg in args)
+            Args.Add(arg);
+    }
 }
