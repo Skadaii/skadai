@@ -1524,7 +1524,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitPrefab: {fileID: 5565563887930918629, guid: 6e89a9e53ee0d0940b0f1d78853f81fa,
     type: 3}
-  unitCount: 3
+  unitCount: 10
 --- !u!114 &1716431412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1537,6 +1537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 877e558381631b949b4825db10ae2da6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  formation: {fileID: 11400000, guid: bf75f1cdf0ae2174cae0dd1f9f55922c, type: 2}
   leader: {fileID: 1875079903}
 --- !u!4 &1716431413
 Transform:
@@ -2035,6 +2036,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55a604abd403d54488ef2a3b0b7841e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  movement: {fileID: 0}
 --- !u!1 &1919374326
 GameObject:
   m_ObjectHideFlags: 0

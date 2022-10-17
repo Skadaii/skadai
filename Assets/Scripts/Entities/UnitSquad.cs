@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class UnitSquad : MonoBehaviour
 {
+    public FormationRule formation = null;
+
     public UnitLeader leader = null;
 
     private List<Unit> units = new List<Unit>();
@@ -23,6 +25,25 @@ public class UnitSquad : MonoBehaviour
     {
         // If leader is null, set a virtual one
         leader ??= CreateVirtuaLeader("Leader");
+    }
+
+    private void Update()
+    {
+        for (int i = 0; i < units.Count; i++)
+        {
+            Vector3 pos = ComputeUnitPosition(i);
+            units[i].movement.MoveTo(pos);
+            unitPositions[i] = pos;
+        }
+    }
+
+    Vector3 ComputeUnitPosition(int index)
+    {
+        if (formation)
+        {
+            return formation.ComputePosition(leader.transform, index);
+        }
+        return leader.transform.position;
     }
 
     UnitLeader CreateVirtuaLeader(string leaderName)
