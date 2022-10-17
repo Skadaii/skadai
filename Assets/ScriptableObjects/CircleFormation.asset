@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29a993c5116289b419c5df5ca04bd8e4, type: 3}
   m_Name: CircleFormation
   m_EditorClassIdentifier: 
-  unitsPerCircle: 10
+  unitsPerCircle: 4
   circleSpacing: 2.5
   baseSpacing: 2.5
+  worldOffset: {x: 0, y: 0, z: 0}
+  localOffset: {x: 0, y: 0, z: 0}
+  baseAngleOffset: 0
+  lineAngleOffset: 2.5
