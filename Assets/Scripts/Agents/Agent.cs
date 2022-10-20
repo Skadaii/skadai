@@ -24,6 +24,12 @@ public class Agent : MonoBehaviour, IDamageable
 
         OnHealthChange();
     }
+    public void AddHealth(int amount)
+    {
+        CurrentHP = Mathf.Min(CurrentHP + amount, MaxHP);
+
+        OnHealthChange();
+    }
 
     protected virtual void OnHealthChange() { }
     protected virtual void OnDeath() { }

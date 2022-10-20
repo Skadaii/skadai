@@ -88,13 +88,17 @@ namespace FSMMono
             }
         }
 
+        private void Update()
+        {
+        }
+
         private void OnDrawGizmos()
         {
         }
 
         #endregion
 
-        #region Perception methods
+        #region PerceptionMethods
 
         public bool IsInIntimateZone(GameObject other)
         {
@@ -165,6 +169,10 @@ namespace FSMMono
                 rb.AddForce(transform.forward * BulletPower);
             }
         }
+        #endregion
+
+        #region UtilsMethod
+
         #endregion
     }
 }

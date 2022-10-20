@@ -18,16 +18,15 @@ public class TurretAgent : Agent, IDamageable
 
     GameObject Target = null;
 
+    Vector3 DeltaVel = Vector3.zero;
+
     protected override void OnDeath()
     {
         gameObject.SetActive(false);
     }
 
-    void ShootToPosition(Vector3 pos)
+    void Shoot()
     {
-        // look at target position
-        transform.LookAt(pos + Vector3.up * transform.position.y);
-
         // instantiate bullet
         if (BulletPrefab)
         {
@@ -47,10 +46,20 @@ public class TurretAgent : Agent, IDamageable
 
     void Update()
     {
-        if (Target && Time.time >= NextShootDate)
+        if (Target)
         {
-            NextShootDate = Time.time + ShootFrequency;
-            ShootToPosition(Target.transform.position);
+            Vector3 desiredForward = Vector3.Normalize(Target.transform.position - transform.position);
+
+            transform.forward = Vector3.SmoothDamp(transform.forward, desiredForward, ref DeltaVel, 0.1f);
+
+            // look at target position
+            //transform.LookAt( + Vector3.up * transform.position.y);
+
+            if (Vector3.SqrMagnitude(transform.forward - desiredForward) < 0.01f && Time.time >= NextShootDate)
+            {
+                NextShootDate = Time.time + ShootFrequency;
+                Shoot();
+            }
         }
     }
 
