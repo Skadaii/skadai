@@ -5,16 +5,9 @@ using UnityEngine;
 public class TurretAgent : Agent, IDamageable
 {
     [SerializeField]
-    float BulletPower = 1000f;
-    [SerializeField]
-    GameObject BulletPrefab;
-
-    [SerializeField]
     float ShootFrequency = 1f;
 
     float NextShootDate = 0f;
-
-    Transform GunTransform;
 
     GameObject Target = null;
 
