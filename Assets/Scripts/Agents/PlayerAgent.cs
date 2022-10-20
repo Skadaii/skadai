@@ -44,11 +44,18 @@ public class PlayerAgent : Agent
             transform.LookAt(pos + Vector3.up * transform.position.y);
     }
 
-    public void NPCShootToPosition(Vector3 pos)
+    /*public void NPCShootToPosition(Vector3 pos)
     {
         GetNPCTargetCursor().transform.position = pos;
 
         leader.m_Squad.ShootToPosition(pos);
+    }*/
+
+    public void NPCShootToPosition(Vector3 pos)
+    {
+        GetNPCTargetCursor().transform.position = pos;
+
+        leader.m_Squad.SetTarget(GetNPCTargetCursor());
     }
 
     protected override void OnHealthChange()

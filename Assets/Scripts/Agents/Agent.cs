@@ -17,6 +17,13 @@ public class Agent : MonoBehaviour, IDamageable
 
     protected int CurrentHP;
 
+    protected Vector3 DeltaVel = Vector3.zero;
+
+    [SerializeField]
+    protected float ShootFrequency = 1f;
+
+    protected float NextShootDate = 0f;
+
     public void AddDamage(int amount)
     {
         CurrentHP -= amount;
@@ -40,7 +47,7 @@ public class Agent : MonoBehaviour, IDamageable
     protected virtual void OnHealthChange() { }
     protected virtual void OnDeath() { }
 
-    public virtual void ShootToPosition(Vector3 pos)
+    public virtual void ShootForward()
     {
         // instantiate bullet
         if (BulletPrefab)

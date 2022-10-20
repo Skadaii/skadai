@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 	Camera viewCamera;
 	Vector3 velocity;
 
-    private Action<Vector3> OnMouseLeftClicked;
+    private Action OnMouseLeftClicked;
     private Action<Vector3> OnMouseRightClicked;
 
     private Movement movement;
@@ -25,9 +25,10 @@ public class PlayerController : MonoBehaviour
 
         viewCamera = Camera.main;
 
-        OnMouseLeftClicked += Player.ShootToPosition;
+        OnMouseLeftClicked += Player.ShootForward;
         OnMouseRightClicked += Player.NPCShootToPosition;
     }
+
     void Update ()
     {
         int floorLayer = 1 << LayerMask.NameToLayer("Floor");
@@ -47,7 +48,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            OnMouseLeftClicked(targetPos);
+            OnMouseLeftClicked();
         }
         if (Input.GetMouseButtonDown(1))
         {

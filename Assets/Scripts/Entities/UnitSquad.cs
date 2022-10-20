@@ -47,10 +47,23 @@ public class UnitSquad : MonoBehaviour
             unitPositions[i] = pos;
         }
     }
-    public void ShootToPosition(Vector3 position)
+
+    /*public void ShootToPosition(Vector3 position)
     {
         for (int i = 0; i < units.Count; i++)
             units[i].agent.ShootToPosition(position);
+    }*/
+
+    public void SetTarget(GameObject target)
+    {
+        for (int i = 0; i < units.Count; i++)
+        {
+            AIAgent ai = units[i].agent as AIAgent;
+            if (ai != null)
+            {
+                ai.SetTarget(target);
+            }
+        }
     }
 
     Vector3 ComputeUnitPosition(int index)

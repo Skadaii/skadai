@@ -21,7 +21,7 @@ public class Bullet : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(Physics.Raycast(transform.position, RB.velocity, out RaycastHit hit, RB.velocity.magnitude * Time.fixedDeltaTime, -1, QueryTriggerInteraction.Ignore))
+        if(Physics.Raycast(transform.position, RB.velocity.normalized, out RaycastHit hit, RB.velocity.magnitude * Time.fixedDeltaTime, -1, QueryTriggerInteraction.Ignore))
         {
             IDamageable damagedAgent = hit.collider.gameObject.GetComponentInParent<IDamageable>();
 
@@ -39,22 +39,4 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    /*private void OnCollisionEnter(Collision collision)
-    {
-        IDamageable damagedAgent = collision.gameObject.GetComponentInParent<IDamageable>();
-        if (damagedAgent == null)
-            damagedAgent = collision.gameObject.GetComponent<IDamageable>();
-        damagedAgent?.AddDamage(1);
-
-        GameObject hitParticles = Instantiate(HitFX, null);
-
-        hitParticles.transform.position = collision.contacts[0].
-        hitParticles.transform.forward = -transform.forward;
-
-        Destroy(hitParticles, 2f);
-
-        Destroy(gameObject);
-    }*/
-
 }
