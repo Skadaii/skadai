@@ -32,4 +32,10 @@ public class NPCMovement : Movement
 
         m_NavAgent.Move(velocity);
     }
+
+
+    public override bool HasReachedPos(float epsilon)
+    {
+        return m_NavAgent.remainingDistance - m_NavAgent.stoppingDistance <= epsilon;
+    }
 }

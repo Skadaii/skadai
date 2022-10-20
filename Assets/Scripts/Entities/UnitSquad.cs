@@ -65,7 +65,8 @@ public class UnitSquad : MonoBehaviour
     UnitLeader CreateVirtuaLeader(string leaderName)
     {
         GameObject leaderGO = new GameObject(leaderName);
-        leaderGO.AddComponent<Movement>();
+        leaderGO.AddComponent<NPCMovement>();
+        leaderGO.AddComponent<PatrolAction>().patrolPoints = GetComponentsInChildren<Transform>();
 
         return leaderGO.AddComponent<UnitLeader>();
     }

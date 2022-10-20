@@ -31,4 +31,13 @@ public class Movement : MonoBehaviour
     public virtual void MoveTo(Vector3 target) => PositionTarget = target;
     public virtual void MoveTo(Transform target) => TransformTarget = target;
 
+    public virtual bool HasReachedPos(float epsilon)
+    {
+        if (positionTarget is null && TransformTarget is null)
+            return true;
+
+        Vector3 difference = (positionTarget ?? TransformTarget.position) - transform.position;
+
+        return Vector3.SqrMagnitude(difference) <= epsilon;
+    }
 }
