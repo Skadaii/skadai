@@ -6,9 +6,9 @@ using UnityEngine.Events;
 public class Agent : MonoBehaviour, IDamageable
 {
     [SerializeField]
-    float BulletPower = 1000f;
+    protected float BulletPower = 1000f;
     [SerializeField]
-    private GameObject BulletPrefab;
+    protected GameObject BulletPrefab;
     protected Transform GunTransform;
 
     [SerializeField]

@@ -18,7 +18,7 @@ public class TurretAgent : Agent, IDamageable
         gameObject.SetActive(false);
     }
 
-    void Shoot()
+    void ShootForward()
     {
         // instantiate bullet
         if (BulletPrefab)
@@ -28,6 +28,7 @@ public class TurretAgent : Agent, IDamageable
             rb.AddForce(transform.forward * BulletPower);
         }
     }
+
     void Start()
     {
         GunTransform = transform.Find("Body/Gun");
@@ -46,12 +47,11 @@ public class TurretAgent : Agent, IDamageable
             transform.forward = Vector3.SmoothDamp(transform.forward, desiredForward, ref DeltaVel, 0.1f);
 
             // look at target position
-            //transform.LookAt( + Vector3.up * transform.position.y);
 
             if (Vector3.SqrMagnitude(transform.forward - desiredForward) < 0.01f && Time.time >= NextShootDate)
             {
                 NextShootDate = Time.time + ShootFrequency;
-                Shoot();
+                ShootForward();
             }
         }
     }
