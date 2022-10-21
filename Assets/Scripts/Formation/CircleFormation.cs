@@ -6,7 +6,10 @@ using UnityEngine;
 public class CircleFormation : FormationRule
 {
     [SerializeField]
-    private float unitsPerCircle = 2f;
+    private int unitsPerCircle = 2;
+
+    [SerializeField]
+    private bool followRotation = true;
 
     [SerializeField]
     private float circleSpacing = 1.5f;
@@ -38,7 +41,10 @@ public class CircleFormation : FormationRule
 
         Vector3 finalOffset = worldOffset + rotation * localOffset;
 
-        Vector3 circularOffset = rotation * (Vector3.right * Mathf.Cos(finalAngle) + Vector3.forward * Mathf.Sin(finalAngle)) * spacing;
+        Vector3 circularOffset = (Vector3.right * Mathf.Cos(finalAngle) + Vector3.forward * Mathf.Sin(finalAngle)) * spacing;
+
+        if (followRotation)
+            circularOffset = rotation * circularOffset;
 
         return finalOffset + center + circularOffset;
     }
