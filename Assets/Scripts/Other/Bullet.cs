@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private GameObject HitFX;
+    private GameObject HitFX;
     Rigidbody RB;
 
     public float Duration = 2f;
 
     private void Awake()
     {
+        HitFX = Resources.Load("FXs/ParticleHit") as GameObject;
         RB = GetComponent<Rigidbody>();
     }
 
@@ -19,7 +20,7 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject, Duration);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if(Physics.Raycast(transform.position, RB.velocity.normalized, out RaycastHit hit, RB.velocity.magnitude * Time.fixedDeltaTime, -1, QueryTriggerInteraction.Ignore))
         {
@@ -27,7 +28,7 @@ public class Bullet : MonoBehaviour
 
             if (damagedAgent == null) damagedAgent = hit.collider.gameObject.GetComponent<IDamageable>();
 
-            damagedAgent?.AddDamage(1);
+            damagedAgent?.AddDamage(10);
 
             GameObject hitParticles = Instantiate(HitFX, null);
 

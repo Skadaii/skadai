@@ -42,6 +42,8 @@ public class UnitSquad : MonoBehaviour
     {
         for (int i = 0; i < units.Count; i++)
         {
+            if (!units[i].gameObject.activeInHierarchy) continue;
+
             Vector3 pos = ComputeUnitPosition(i);
             units[i].movement.MoveTo(pos);
             unitPositions[i] = pos;
