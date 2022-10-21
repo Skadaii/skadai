@@ -6,9 +6,6 @@ using System.Collections.Generic;
 [RequireComponent(typeof(SphereCollider))]
 public class AIAgent : Agent, IDamageable
 {
-    [SerializeField]
-    Slider HPSlider = null;
-
     protected SphereCollider Trigger;
 
     protected List<Agent> AgentTrespassers = new List<Agent>();
@@ -17,17 +14,13 @@ public class AIAgent : Agent, IDamageable
 
     #region MonoBehaviour
 
-    protected void Awake()
+    protected new void Awake()
     {
+        base.Awake();
+
         CurrentHP = MaxHP;
 
         Trigger = GetComponent<SphereCollider>();
-
-        if (HPSlider != null)
-        {
-            HPSlider.maxValue = MaxHP;
-            HPSlider.value = CurrentHP;
-        }
     }
 
     private void Start()
@@ -76,12 +69,17 @@ public class AIAgent : Agent, IDamageable
     #endregion
 
     #region ActionMethods
+
     protected override void OnHealthChange()
     {
-        if (HPSlider != null)
-        {
-            HPSlider.value = CurrentHP;
-        }
+        base.OnHealthChange();
+    }
+
+    protected override void OnDeath()
+    {
+        base.OnDeath();
+
+        gameObject.SetActive(false);
     }
 
     #endregion

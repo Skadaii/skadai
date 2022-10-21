@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class TurretAgent : AIAgent
 {
-
-    protected override void OnDeath()
-    {
-        gameObject.SetActive(false);
-    }
-
     void Start()
     {
         GunTransform = transform.Find("Body/Gun");
@@ -20,7 +14,7 @@ public class TurretAgent : AIAgent
     }
 
 
-    private void Update()
+    private new void Update()
     {
         base.Update();
 
