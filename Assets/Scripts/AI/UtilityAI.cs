@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(FSMMono.AIAgent))]
 public class UtilityAI : MonoBehaviour
 {
-    public UAI_Actions Actions;
+    public UAI_ActionSet Actions;
 
     private FSMMono.AIAgent AIAgent = null;
 
@@ -21,6 +21,7 @@ public class UtilityAI : MonoBehaviour
         AIAgent = GetComponent<FSMMono.AIAgent>();
 
         Actions = Instantiate(Actions);
+
         if (Actions != null)
             Actions.Setup();
     }

@@ -46,11 +46,11 @@ public class UtilityAI_Editor : Editor
     SerializedProperty ActionsProperty;
     SerializedProperty BlackboardProperty;
 
-    private string actionsName = "NewActions";
-    private bool showActions = false;
+    private string ActionSetName = "NewActionSet";
+    private bool ShowActionSet = false;
 
-    private UAI_Action toRemoveAction = null;
-    private UAI_Method toRemoveMethod = null;
+    private UAI_Action ToRemoveAction = null;
+    private UAI_Method ToRemoveMethod = null;
 
     List<string> ComponentsName = new List<string>();
 
@@ -108,10 +108,10 @@ public class UtilityAI_Editor : Editor
 
         if (utilityAI.Actions != null)
         {
-            if (toRemoveAction != null)
+            if (ToRemoveAction != null)
             {
-                utilityAI.Actions.actions.Remove(toRemoveAction);
-                toRemoveAction = null;
+                utilityAI.Actions.actions.Remove(ToRemoveAction);
+                ToRemoveAction = null;
             }
 
             EditorGUILayout.PropertyField(BlackboardProperty);
@@ -119,8 +119,8 @@ public class UtilityAI_Editor : Editor
         }
         else
         {
-            actionsName = GUILayout.TextField(actionsName);
-            if (GUILayout.Button("Create UAI Actions"))
+            ActionSetName = GUILayout.TextField(ActionSetName);
+            if (GUILayout.Button("Create UAI Action Set"))
             {
                 CreateActions();
             }
@@ -130,7 +130,7 @@ public class UtilityAI_Editor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    public void SaveActions(UAI_Actions uai_actions)
+    public void SaveActions(UAI_ActionSet uai_actions)
     {
         EditorUtility.SetDirty(uai_actions);
         AssetDatabase.SaveAssets();
@@ -138,7 +138,7 @@ public class UtilityAI_Editor : Editor
 
     private void CreateActions()
     {
-        UAI_Actions asset = ScriptableObject.CreateInstance<UAI_Actions>();
+        UAI_ActionSet asset = ScriptableObject.CreateInstance<UAI_ActionSet>();
 
         if (!AssetDatabase.IsValidFolder("Assets/ScriptableObjects"))
         {
@@ -147,14 +147,14 @@ public class UtilityAI_Editor : Editor
             AssetDatabase.CreateFolder("Assets/ScriptableObjects/UAI", "Actions");
         }
 
-        AssetDatabase.CreateAsset(asset, "Assets/ScriptableObjects/UAI/Actions/" + actionsName + ".asset");
+        AssetDatabase.CreateAsset(asset, "Assets/ScriptableObjects/UAI/Actions/" + ActionSetName + ".asset");
         AssetDatabase.SaveAssets();
 
         UtilityAI utilityAI = target as UtilityAI;
         utilityAI.Actions = asset;
     }
 
-    public void DrawActions(UAI_Actions uai_actions)
+    public void DrawActions(UAI_ActionSet uai_actions)
     {
         if (uai_actions == null)
             return;
@@ -173,7 +173,7 @@ public class UtilityAI_Editor : Editor
         //}
     }
 
-    private void CreateAction(UAI_Actions uai_actions)
+    private void CreateAction(UAI_ActionSet uai_actions)
     {
         uai_actions.actions.Add(new UAI_Action());
     }
@@ -185,7 +185,7 @@ public class UtilityAI_Editor : Editor
         if (action.Show)
         {
             if (GUILayout.Button("Remove action"))
-                toRemoveAction = action;
+                ToRemoveAction = action;
 
             action.actionName = EditorGUILayout.TextField("Action name:", action.actionName);
 
@@ -195,10 +195,10 @@ public class UtilityAI_Editor : Editor
             foreach (UAI_Method method in action.methods)
                 DrawMethod(method);
 
-            if (toRemoveMethod != null)
+            if (ToRemoveMethod != null)
             {
-                action.methods.Remove(toRemoveMethod);
-                toRemoveMethod = null;
+                action.methods.Remove(ToRemoveMethod);
+                ToRemoveMethod = null;
             }
 
             DrawConsideration(action.consideration);
@@ -217,7 +217,7 @@ public class UtilityAI_Editor : Editor
         if (method.Show)
         {
             if (GUILayout.Button("Remove method"))
-                toRemoveMethod = method;
+                ToRemoveMethod = method;
 
             UtilityAI utilityAI = target as UtilityAI;
 
