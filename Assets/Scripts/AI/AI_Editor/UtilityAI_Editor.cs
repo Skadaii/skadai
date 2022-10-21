@@ -219,8 +219,6 @@ public class UtilityAI_Editor : Editor
             if (GUILayout.Button("Remove method"))
                 ToRemoveMethod = method;
 
-            UtilityAI utilityAI = target as UtilityAI;
-
             EditorGUI.BeginChangeCheck();
 
             method.ComponentIndex = EditorGUILayout.Popup("Component: ", method.ComponentIndex, ComponentsName.ToArray());
@@ -229,8 +227,7 @@ public class UtilityAI_Editor : Editor
             if (EditorGUI.EndChangeCheck())
             {
                 method.UpdateMethodInfo(ComponentsName[method.ComponentIndex],
-                    MethodsName.ElementAt(method.ComponentIndex).Value.ElementAt(method.MethodIndex),
-                    utilityAI);
+                    MethodsName.ElementAt(method.ComponentIndex).Value.ElementAt(method.MethodIndex));
             }
         }
     }
@@ -241,8 +238,6 @@ public class UtilityAI_Editor : Editor
 
         if (consideration.Show)
         {
-            UtilityAI utilityAI = target as UtilityAI;
-
             EditorGUI.BeginChangeCheck();
 
             consideration.ComponentIndex = EditorGUILayout.Popup("Component: ", consideration.ComponentIndex, ComponentsName.ToArray());
@@ -251,8 +246,7 @@ public class UtilityAI_Editor : Editor
             if (EditorGUI.EndChangeCheck())
             {
                 consideration.UpdateMethodInfo(ComponentsName[consideration.ComponentIndex],
-                    MethodsName.ElementAt(consideration.ComponentIndex).Value.ElementAt(consideration.MethodIndex),
-                    utilityAI);
+                    MethodsName.ElementAt(consideration.ComponentIndex).Value.ElementAt(consideration.MethodIndex));
             }
 
             EditorGUILayout.CurveField("Curve", consideration.AnimationCurve);

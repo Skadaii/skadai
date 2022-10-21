@@ -6,6 +6,8 @@ public class UnitSquad : MonoBehaviour
 {
     public FormationRule formation = null;
 
+    [SerializeField] private GameObject virtualLeaderPrefab = null;
+
     public UnitLeader leader = null;
 
     private List<Unit> units = new List<Unit>();
@@ -33,7 +35,7 @@ public class UnitSquad : MonoBehaviour
     private void OnInitializeLeader()
     {
         // If leader is null, set a virtual one
-        leader ??= CreateVirtuaLeader("Leader");
+        leader ??= CreateVirtuaLeader();
 
         leader.m_Squad = this;
 
@@ -95,12 +97,12 @@ public class UnitSquad : MonoBehaviour
         return leader.transform.position;
     }
 
-    UnitLeader CreateVirtuaLeader(string leaderName)
+    UnitLeader CreateVirtuaLeader()
     {
-        GameObject leaderGO = new GameObject(leaderName);
-        leaderGO.AddComponent<NPCMovement>();
-        leaderGO.AddComponent<PatrolAction>().patrolPoints = GetComponentsInChildren<Transform>();
+        GameObject leader = Instantiate(virtualLeaderPrefab);
 
-        return leaderGO.AddComponent<UnitLeader>();
+        leader.GetComponent<PatrolAction>().patrolPoints = GetComponentsInChildren<Transform>();
+
+        return leader.GetComponent<UnitLeader>();
     }
 }
