@@ -101,10 +101,6 @@ public class UnitAgent : AIAgent
         NavMeshAgentInst.isStopped = false;
         NavMeshAgentInst.SetDestination(dest);
     }
-    public bool HasReachedPos()
-    {
-        return NavMeshAgentInst.remainingDistance - NavMeshAgentInst.stoppingDistance <= 0f;
-    }
 
     #endregion
 

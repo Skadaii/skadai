@@ -25,11 +25,23 @@ public class NPCMovement : Movement
         m_NavAgent.SetDestination(target);
     }
 
+    public override void MoveTo(Transform target)
+    {
+        base.MoveTo(target);
+        m_NavAgent.SetDestination(target.position);
+    }
+
     public override void MoveToward(Vector3 velocity)
     {
         TransformTarget = null;
         PositionTarget = null;
 
         m_NavAgent.Move(velocity);
+    }
+
+
+    public override bool HasReachedPos(float epsilon)
+    {
+        return m_NavAgent.remainingDistance - m_NavAgent.stoppingDistance <= epsilon;
     }
 }
