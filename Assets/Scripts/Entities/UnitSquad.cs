@@ -27,15 +27,26 @@ public class UnitSquad : MonoBehaviour
 
     private void Start()
     {
+        OnInitializeLeader();
+    }
+
+    private void OnInitializeLeader()
+    {
         // If leader is null, set a virtual one
         leader ??= CreateVirtuaLeader("Leader");
 
         leader.m_Squad = this;
+
+        leader.GetComponent<Movement>().OnMoveChange.AddListener(UpdatePosition);
+    }
+
+    private void OnDestroy()
+    {
+        leader?.GetComponent<Movement>().OnMoveChange.RemoveListener(UpdatePosition);
     }
 
     private void Update()
     {
-        UpdatePosition();
     }
 
     public void UpdatePosition()

@@ -14,5 +14,7 @@ public class PlayerMovement : Movement
     public override void MoveToward(Vector3 velocity)
     {
         rb.MovePosition(rb.position + velocity * Time.deltaTime);
+
+        base.MoveToward(velocity);
     }
 }

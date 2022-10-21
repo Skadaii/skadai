@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Movement : MonoBehaviour
 {
+    public UnityEvent OnMoveChange = new UnityEvent();
+
     private Transform transformTarget = null;
     private Vector3? positionTarget = null;
 
@@ -27,9 +30,20 @@ public class Movement : MonoBehaviour
         }
     }
 
-    public virtual void MoveToward(Vector3 velocity) { }
-    public virtual void MoveTo(Vector3 target) => PositionTarget = target;
-    public virtual void MoveTo(Transform target) => TransformTarget = target;
+    public virtual void MoveToward(Vector3 velocity)
+    {
+        OnMoveChange.Invoke();
+    }
+    public virtual void MoveTo(Vector3 target)
+    {
+        PositionTarget = target;
+        OnMoveChange.Invoke();
+    }
+    public virtual void MoveTo(Transform target)
+    {
+        TransformTarget = target;
+        OnMoveChange.Invoke();
+    }
 
     public virtual bool HasReachedPos(float epsilon)
     {
