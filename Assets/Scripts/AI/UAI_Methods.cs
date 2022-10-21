@@ -6,6 +6,7 @@ using System;
 [System.Serializable]
 public class UAI_Method
 {
+    public Component Component;
     public MethodInfo MethodInfo;
 
     public int ComponentIndex;
@@ -13,16 +14,14 @@ public class UAI_Method
 
     public bool Show = false;
 
-    public List<object> Args = new List<object>();
-
     public void UpdateMethodInfo(string componentName, string methodName, UtilityAI utilityAI)
     {
-        Component component = utilityAI.GetComponent(componentName);
-        MethodInfo = component.GetType().GetMethod(methodName);
+        Component = utilityAI.GetComponent(componentName);
+        MethodInfo = Component.GetType().GetMethod(methodName);
+    }
 
-        Type[] args = MethodInfo.GetGenericArguments();
-
-        foreach (Type arg in args)
-            Args.Add(arg);
+    public void Invoke()
+    {
+        MethodInfo.Invoke(Component, null);
     }
 }

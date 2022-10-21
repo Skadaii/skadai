@@ -6,4 +6,13 @@ using UnityEngine;
 public class UAI_Actions : ScriptableObject
 {
     public List<UAI_Action> actions = new List<UAI_Action>();
+    public UAI_Blackboard Blackboard;
+
+    public void Setup()
+    {
+        if (Blackboard == null)
+            return;
+
+        Blackboard = Instantiate(Blackboard);
+    }
 }

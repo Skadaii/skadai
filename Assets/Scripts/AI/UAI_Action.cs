@@ -6,7 +6,13 @@ using UnityEngine;
 public class UAI_Action
 {
     public string actionName = "Action";
-    public bool show = false;
-    public List<UAI_Method> methods;
-    public UAI_Consideration consideration;
+    public bool Show = false;
+    public List<UAI_Method> methods = new List<UAI_Method>();
+    public UAI_Consideration consideration = new UAI_Consideration();
+
+    public void InvokeMethods()
+    {
+        foreach (UAI_Method method in methods)
+            method.Invoke();
+    }
 }

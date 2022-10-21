@@ -6,6 +6,7 @@ using System.Reflection;
 using System;
 using System.Linq;
 using UnityEngine.EventSystems;
+using static System.Collections.Specialized.BitVector32;
 
 public class CustomUI
 {
@@ -43,10 +44,13 @@ public class CustomUI
 public class UtilityAI_Editor : Editor
 {
     SerializedProperty ActionsProperty;
+    SerializedProperty BlackboardProperty;
 
     private string actionsName = "NewActions";
     private bool showActions = false;
+
     private UAI_Action toRemoveAction = null;
+    private UAI_Method toRemoveMethod = null;
 
     List<string> ComponentsName = new List<string>();
 
@@ -60,6 +64,9 @@ public class UtilityAI_Editor : Editor
             return;
 
         ActionsProperty = serializedObject.FindProperty("Actions");
+        SerializedObject ActionsObject = new SerializedObject(ActionsProperty.objectReferenceValue);
+        BlackboardProperty = ActionsObject.FindProperty("Blackboard");
+
         ComputeComponentsAndMethods(utilityAI);
     }
 
@@ -107,6 +114,7 @@ public class UtilityAI_Editor : Editor
                 toRemoveAction = null;
             }
 
+            EditorGUILayout.PropertyField(BlackboardProperty);
             DrawActions(utilityAI.Actions);
         }
         else
@@ -118,6 +126,7 @@ public class UtilityAI_Editor : Editor
             }
         }
 
+        BlackboardProperty.serializedObject.ApplyModifiedProperties();
         serializedObject.ApplyModifiedProperties();
     }
 
@@ -150,18 +159,18 @@ public class UtilityAI_Editor : Editor
         if (uai_actions == null)
             return;
 
-        if (GUILayout.Button("Save actions"))
+        if (GUILayout.Button("Save"))
             SaveActions(uai_actions);
 
         if (GUILayout.Button("Create action"))
             CreateAction(uai_actions);
 
-        showActions = CustomUI.Foldout("Actions:", showActions, new RectOffset());
-        if (showActions)
-        {       
+        //showActions = CustomUI.Foldout("Actions:", showActions, new RectOffset());
+        //if (showActions)
+        //{       
             foreach (UAI_Action action in uai_actions.actions)
                 DrawAction(action);
-        }
+        //}
     }
 
     private void CreateAction(UAI_Actions uai_actions)
@@ -171,9 +180,9 @@ public class UtilityAI_Editor : Editor
 
     public void DrawAction(UAI_Action action)
     {
-        action.show = CustomUI.Foldout(action.actionName, action.show, new RectOffset());
+        action.Show = CustomUI.Foldout(action.actionName, action.Show, new RectOffset());
 
-        if (action.show)
+        if (action.Show)
         {
             if (GUILayout.Button("Remove action"))
                 toRemoveAction = action;
@@ -185,6 +194,12 @@ public class UtilityAI_Editor : Editor
 
             foreach (UAI_Method method in action.methods)
                 DrawMethod(method);
+
+            if (toRemoveMethod != null)
+            {
+                action.methods.Remove(toRemoveMethod);
+                toRemoveMethod = null;
+            }
 
             DrawConsideration(action.consideration);
         }
@@ -201,6 +216,9 @@ public class UtilityAI_Editor : Editor
 
         if (method.Show)
         {
+            if (GUILayout.Button("Remove method"))
+                toRemoveMethod = method;
+
             UtilityAI utilityAI = target as UtilityAI;
 
             EditorGUI.BeginChangeCheck();
@@ -214,15 +232,30 @@ public class UtilityAI_Editor : Editor
                     MethodsName.ElementAt(method.ComponentIndex).Value.ElementAt(method.MethodIndex),
                     utilityAI);
             }
-
-            SerializedProperty methodProperty = serializedObject.FindProperty("Actions.actions");
-            EditorGUILayout.PropertyField(methodProperty);
-
         }
     }
 
     public void DrawConsideration(UAI_Consideration consideration)
     {
+        consideration.Show = CustomUI.Foldout("Consideration", consideration.Show, new RectOffset());
 
+        if (consideration.Show)
+        {
+            UtilityAI utilityAI = target as UtilityAI;
+
+            EditorGUI.BeginChangeCheck();
+
+            consideration.ComponentIndex = EditorGUILayout.Popup("Component: ", consideration.ComponentIndex, ComponentsName.ToArray());
+            consideration.MethodIndex = EditorGUILayout.Popup("Consideration Method: ", consideration.MethodIndex, MethodsName.ElementAt(consideration.ComponentIndex).Value);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                consideration.UpdateMethodInfo(ComponentsName[consideration.ComponentIndex],
+                    MethodsName.ElementAt(consideration.ComponentIndex).Value.ElementAt(consideration.MethodIndex),
+                    utilityAI);
+            }
+
+            EditorGUILayout.CurveField("Curve", consideration.AnimationCurve);
+        }
     }
 }
