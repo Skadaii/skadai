@@ -26,7 +26,7 @@ public class CircleFormation : FormationRule
     [SerializeField]
     private float lineAngleOffset = Mathf.PI * 0.5f;
 
-    override public Vector3 ComputePosition(Transform center, int index)
+    override public Vector3 ComputePosition(Vector3 center, Quaternion rotation, int index)
     {
         int lineIndex = Mathf.FloorToInt(index / unitsPerCircle);
 
@@ -36,10 +36,10 @@ public class CircleFormation : FormationRule
 
         float spacing = baseSpacing + lineIndex * circleSpacing;
 
-        Vector3 finalOffset = worldOffset + center.TransformVector(localOffset);
+        Vector3 finalOffset = worldOffset + rotation * localOffset;
 
-        return finalOffset + center.position +
-                (center.right * Mathf.Cos(finalAngle) +
-                center.forward * Mathf.Sin(finalAngle)) * spacing;
+        Vector3 circularOffset = rotation * (Vector3.right * Mathf.Cos(finalAngle) + Vector3.forward * Mathf.Sin(finalAngle)) * spacing;
+
+        return finalOffset + center + circularOffset;
     }
 }

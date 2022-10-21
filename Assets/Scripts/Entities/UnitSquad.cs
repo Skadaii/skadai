@@ -57,7 +57,16 @@ public class UnitSquad : MonoBehaviour
     {
         if (formation)
         {
-            return formation.ComputePosition(leader.transform, index);
+            if (leader.movement.PositionTarget is not null)
+                return formation.ComputePosition(leader.movement.PositionTarget.Value, leader.transform.rotation, index);
+
+            if (leader.movement.TransformTarget is not null)
+            {
+                Transform target = leader.movement.TransformTarget;
+                return formation.ComputePosition(target.position, target.rotation, index);
+            }
+
+            return formation.ComputePosition(leader.transform.position, leader.transform.rotation, index);
         }
         return leader.transform.position;
     }

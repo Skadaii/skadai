@@ -15,6 +15,5 @@ public class NPCController : MonoBehaviour
 
     private void Update()
     {
-        m_Movement.MoveTo(target);
     }
 }

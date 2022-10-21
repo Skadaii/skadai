@@ -19,14 +19,14 @@ public class PatrolAction : MonoBehaviour
     public void Start()
     {
         index = 0;
-        movement.MoveTo(patrolPoints[index].position);
+        movement.MoveTo(patrolPoints[index]);
     }
     public void Update()
     {
         if (movement.HasReachedPos(epsilon))
         {
             index = (index + 1) % patrolPoints.Length;
-            movement.MoveTo(patrolPoints[index].position);
+            movement.MoveTo(patrolPoints[index]);
         }
     }
 }

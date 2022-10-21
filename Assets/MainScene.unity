@@ -2639,6 +2639,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AIAgent
       objectReference: {fileID: 0}
+    - target: {fileID: 5565563887930918629, guid: 6e89a9e53ee0d0940b0f1d78853f81fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5565563887930918652, guid: 6e89a9e53ee0d0940b0f1d78853f81fa,
         type: 3}
       propertyPath: HPSlider
