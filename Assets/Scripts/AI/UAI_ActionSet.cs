@@ -10,10 +10,8 @@ public class UAI_ActionSet : ScriptableObject
 
     public void Setup(UtilityAI utilityAI)
     {
-        if (Blackboard == null)
-            return;
-
-        Blackboard = Instantiate(Blackboard);
+        if (Blackboard != null)
+            Blackboard = Instantiate(Blackboard);
 
         foreach(UAI_Action action in actions)
         {

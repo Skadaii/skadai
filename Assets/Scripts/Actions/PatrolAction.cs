@@ -21,6 +21,7 @@ public class PatrolAction : MonoBehaviour
     {
         if (movement.HasReachedPos(epsilon))
         {
+            Debug.Log("Patroling");
             index = (index + 1) % patrolPoints.Length;
             movement.MoveTo(patrolPoints[index]);
         }
