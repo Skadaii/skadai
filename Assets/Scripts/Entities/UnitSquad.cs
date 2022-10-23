@@ -1,6 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using UnityEditor;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.UI.CanvasScaler;
 
 public class UnitSquad : MonoBehaviour
 {
@@ -13,6 +17,10 @@ public class UnitSquad : MonoBehaviour
     private List<Unit> units = new List<Unit>();
     private Vector3[] unitPositions;
 
+    [SerializeField] private float defendRange = 2f;
+    private Unit defender = null;
+    private GameObject leaderAttacker = null;
+
     public List<Unit> Units
     {
         get => units;
@@ -21,7 +29,7 @@ public class UnitSquad : MonoBehaviour
             units = value;
 
             foreach (Unit unit in units)
-                unit.m_Squad = this;
+                unit.SetSquad(this);
 
             unitPositions = new Vector3[units.Count];
         }
@@ -37,24 +45,58 @@ public class UnitSquad : MonoBehaviour
         // If leader is null, set a virtual one
         leader ??= CreateVirtuaLeader();
 
-        leader.m_Squad = this;
+        leader.SetSquad(this);
 
-        leader.GetComponent<Movement>().OnMoveChange.AddListener(UpdatePosition);
+        leader.GetComponent<Movement>().OnMoveChange.AddListener(UpdatePositions);
     }
 
     private void OnDestroy()
     {
-        leader?.GetComponent<Movement>().OnMoveChange.RemoveListener(UpdatePosition);
+        if (leader && leader.TryGetComponent(out Movement leaderMovement))
+            leaderMovement.OnMoveChange.RemoveListener(UpdatePositions);
     }
 
-    private void Update()
+    public void AskDefenderUnit(GameObject attacker)
     {
-    }
+        leaderAttacker = attacker;
 
-    public void UpdatePosition()
-    {
+        Unit nearestUnit = null;
+        float minDist = Mathf.Infinity;
+
+        // Get the nearest unit to the line leader/attacker 
         for (int i = 0; i < units.Count; i++)
         {
+            Unit unit = units[i];
+
+            float dist = HandleUtility.DistancePointLine(unit.transform.position, leader.transform.position, leaderAttacker.transform.position);
+            if (dist < minDist)
+            {
+                nearestUnit = unit;
+                minDist = dist;
+            }
+        }
+
+        defender = nearestUnit;
+    }
+
+    public void UpdatePositions()
+    {
+        if (defender)
+        {
+            Vector3 direction = Vector3.Normalize(leaderAttacker.transform.position - leader.transform.position);
+
+            Vector3 pos = leader.transform.position + direction * defendRange;
+
+            defender.movement.MoveTo(pos);
+        }
+
+        for (int i = 0; i < units.Count; i++)
+        {
+            Unit unit = units[i];
+
+            if (unit == defender)
+                continue;
+
             Vector3 pos = ComputeUnitPosition(i);
             units[i].movement.MoveTo(pos);
             unitPositions[i] = pos;

@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 1420389176368549041}
   - component: {fileID: 1420389176368549045}
   - component: {fileID: 1420389176368549048}
-  - component: {fileID: 1420389176368549046}
   m_Layer: 0
   m_Name: Virtual Leader
   m_TagString: Untagged
@@ -116,16 +115,3 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1420389176368549046
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1420389176368549040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d30a297dcff61ad4b81b66666d6ce34b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Actions: {fileID: 11400000, guid: f45b642192c78714aa55edfe97e6033d, type: 2}

@@ -24,7 +24,8 @@ public class Agent : MonoBehaviour, IDamageable
 
     protected float NextShootDate = 0f;
 
-    public void AddDamage(int amount)
+    public UnityEvent<GameObject> OnHit = new UnityEvent<GameObject>();
+    public void AddDamage(int amount, GameObject attacker)
     {
         CurrentHP -= amount;
         if (CurrentHP <= 0)
@@ -34,6 +35,8 @@ public class Agent : MonoBehaviour, IDamageable
 
             OnDeath();
         }
+        else
+            OnHit.Invoke(attacker);
 
         OnHealthChange();
     }
@@ -55,6 +58,9 @@ public class Agent : MonoBehaviour, IDamageable
             GameObject bullet = Instantiate(BulletPrefab, GunTransform.position + transform.forward * 0.5f, Quaternion.identity);
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             rb.AddForce(transform.forward * BulletPower);
+
+            Bullet bulletComp = bullet.GetComponent<Bullet>();
+            bulletComp.Shooter = gameObject;
         }
     }
 }

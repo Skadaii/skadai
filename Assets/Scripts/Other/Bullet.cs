@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private GameObject HitFX;
+    public GameObject Shooter = null;
     Rigidbody RB;
 
     public float Duration = 2f;
@@ -27,7 +28,7 @@ public class Bullet : MonoBehaviour
 
             if (damagedAgent == null) damagedAgent = hit.collider.gameObject.GetComponent<IDamageable>();
 
-            damagedAgent?.AddDamage(1);
+            damagedAgent?.AddDamage(1, Shooter);
 
             GameObject hitParticles = Instantiate(HitFX, null);
 

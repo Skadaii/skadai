@@ -8,7 +8,7 @@ public class Unit : MonoBehaviour
     public Movement movement = null;
     public Agent agent = null;
 
-    [SerializeField] public UnitSquad m_Squad = null;
+    public UnitSquad m_Squad { get; private set; } = null;
 
     // Start is called before the first frame update
     void Awake()
@@ -16,4 +16,6 @@ public class Unit : MonoBehaviour
         movement = GetComponent<Movement>();
         agent = GetComponent<Agent>();
     }
+
+    public virtual void SetSquad(UnitSquad squad) => m_Squad = squad;
 }

@@ -1155,6 +1155,7 @@ MonoBehaviour:
   virtualLeaderPrefab: {fileID: 1420389176368549040, guid: 6108816da05e2f446bc8a7d51ce5a5ba,
     type: 3}
   leader: {fileID: 0}
+  defendRange: 2
 --- !u!4 &1003314287
 Transform:
   m_ObjectHideFlags: 0
@@ -1746,6 +1747,7 @@ MonoBehaviour:
   formation: {fileID: 11400000, guid: bf75f1cdf0ae2174cae0dd1f9f55922c, type: 2}
   virtualLeaderPrefab: {fileID: 0}
   leader: {fileID: 1875079903}
+  defendRange: 2
 --- !u!4 &1716431413
 Transform:
   m_ObjectHideFlags: 0
@@ -2215,6 +2217,9 @@ MonoBehaviour:
     type: 3}
   MaxHP: 100
   ShootFrequency: 1
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
   TargetCursorPrefab: {fileID: 1510336254582165163, guid: 7b6276c878e17d241921c647a7d9da0e,
     type: 3}
   NPCTargetCursorPrefab: {fileID: 7737544659063618026, guid: 0511cdf56d7924642937deb7c2bf69de,
@@ -2250,7 +2255,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 0}
   agent: {fileID: 0}
-  m_Squad: {fileID: 0}
 --- !u!1 &1919374326
 GameObject:
   m_ObjectHideFlags: 0
