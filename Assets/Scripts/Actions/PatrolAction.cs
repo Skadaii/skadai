@@ -36,4 +36,9 @@ public class PatrolAction : MonoBehaviour
         index = 0;
         movement.MoveTo(patrolPoints[index]);
     }
+
+    private void Update()
+    {
+        Patrol();
+    }
 }

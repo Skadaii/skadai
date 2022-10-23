@@ -101,7 +101,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 0}
   agent: {fileID: 0}
-  m_Squad: {fileID: 0}
 --- !u!135 &1420389176368549048
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -110,7 +109,7 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1420389176368549040}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5

@@ -68,7 +68,7 @@ public class UnitSquad : MonoBehaviour
         {
             Unit unit = units[i];
 
-            float dist = HandleUtility.DistancePointLine(unit.transform.position, leader.transform.position, leaderAttacker.transform.position);
+            float dist = Vector3.Distance(unit.transform.position, DefenderPosition);
             if (dist < minDist)
             {
                 nearestUnit = unit;
@@ -79,13 +79,13 @@ public class UnitSquad : MonoBehaviour
         defender = nearestUnit;
     }
 
+    Vector3 DefenderPosition => Vector3.Normalize(leaderAttacker.transform.position - leader.transform.position) * defendRange;
+
     public void UpdatePositions()
     {
         if (defender)
         {
-            Vector3 direction = Vector3.Normalize(leaderAttacker.transform.position - leader.transform.position);
-
-            Vector3 pos = leader.transform.position + direction * defendRange;
+            Vector3 pos = leader.transform.position + DefenderPosition;
 
             defender.movement.MoveTo(pos);
         }
@@ -141,7 +141,7 @@ public class UnitSquad : MonoBehaviour
 
     UnitLeader CreateVirtuaLeader()
     {
-        GameObject leader = Instantiate(virtualLeaderPrefab);
+        GameObject leader = Instantiate(virtualLeaderPrefab, transform.position, transform.rotation);
 
         leader.GetComponent<PatrolAction>().patrolPoints = GetComponentsInChildren<Transform>();
 
