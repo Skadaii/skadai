@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 49960626110534419}
   - component: {fileID: 49960626110534417}
   - component: {fileID: 49960626110534416}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 49960626340365856}
   - component: {fileID: 49960626340365859}
   - component: {fileID: 49960626340365857}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Turret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,8 +145,8 @@ MonoBehaviour:
   BulletPower: 1000
   BulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
     type: 3}
-  MaxHP: 100
-  ShootFrequency: 0.2
+  MaxHP: 500
+  ShootFrequency: 0.25
   HPBarHeight: 1.5
   HPBarPrefab: {fileID: 1553091337664375409, guid: dfdc7fa0997f2554b808ddef72b14e55,
     type: 3}
@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 49960627115765610}
   - component: {fileID: 49960627115765621}
   - component: {fileID: 49960627115765620}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}

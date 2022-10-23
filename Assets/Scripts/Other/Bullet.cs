@@ -8,11 +8,15 @@ public class Bullet : MonoBehaviour
     Rigidbody RB;
 
     public float Duration = 2f;
+    public LayerMask IgnoreMask;
+    private MeshRenderer MRenderer;
 
     private void Awake()
     {
         HitFX = Resources.Load("FXs/ParticleHit") as GameObject;
         RB = GetComponent<Rigidbody>();
+
+        MRenderer = GetComponent<MeshRenderer>();
     }
 
     void Start()
@@ -22,7 +26,7 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
-        if(Physics.Raycast(transform.position, RB.velocity.normalized, out RaycastHit hit, RB.velocity.magnitude * Time.fixedDeltaTime, -1, QueryTriggerInteraction.Ignore))
+        if(Physics.SphereCast(transform.position, transform.lossyScale.x * 0.5f, RB.velocity.normalized, out RaycastHit hit, RB.velocity.magnitude * Time.fixedDeltaTime, IgnoreMask, QueryTriggerInteraction.Ignore))
         {
             IDamageable damagedAgent = hit.collider.gameObject.GetComponentInParent<IDamageable>();
 
@@ -37,7 +41,11 @@ public class Bullet : MonoBehaviour
 
             Destroy(hitParticles, 2f);
 
-            Destroy(gameObject);
+            MRenderer.enabled = false;
+            this.enabled      = false;
+            RB.isKinematic = true;
+
+            Destroy(gameObject,2f);
         }
     }
 }

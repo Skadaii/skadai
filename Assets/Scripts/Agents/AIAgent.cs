@@ -46,12 +46,25 @@ public class AIAgent : Agent, IDamageable
     {
         if (Target)
         {
+            if (!Target.gameObject.activeInHierarchy)
+            {
+                if(Target.TryGetComponent(out Agent agent))
+                {
+                    OnAgentExit(agent);
+                }
+
+                Target = null;
+
+                return;
+            }
+
             // Look at target position
 
             Vector3 desiredForward = Target.transform.position - transform.position;
+
             desiredForward = Vector3.Normalize(new Vector3(desiredForward.x, 0f, desiredForward.z));
 
-            transform.forward = Vector3.SmoothDamp(transform.forward, desiredForward, ref DeltaVel, 0.05f);
+            transform.forward = Vector3.Lerp(transform.forward, desiredForward, 0.1f);
 
             //  Can shoot ?
             if (Vector3.SqrMagnitude(transform.forward - desiredForward) < 0.1f && Time.time >= NextShootDate)
@@ -80,6 +93,36 @@ public class AIAgent : Agent, IDamageable
         base.OnDeath();
 
         gameObject.SetActive(false);
+    }
+
+
+    public override void ShootForward()
+    {
+        // instantiate bullet
+        if (BulletPrefab && !GunCheckObstacle())
+        {
+            GameObject bullet = Instantiate(BulletPrefab, GunTransform.position, Quaternion.identity);
+
+            if (bullet.TryGetComponent(out Bullet bulletComp))
+            {
+                bulletComp.IgnoreMask = ~(1 << gameObject.layer);
+            }
+
+            Rigidbody rb = bullet.GetComponent<Rigidbody>();
+
+            if (Target)
+            {
+                Vector3 bullerTrajectory = Target.transform.position - bullet.transform.position;
+
+                bullerTrajectory = Vector3.Normalize(new Vector3(bullerTrajectory.x, 0f, bullerTrajectory.z));
+
+                rb.AddForce(bullerTrajectory * BulletPower);
+            }
+            else
+            {
+                rb.AddForce(transform.forward * BulletPower);
+            }
+        }
     }
 
     #endregion

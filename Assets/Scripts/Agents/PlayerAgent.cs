@@ -14,12 +14,24 @@ public class PlayerAgent : Agent
     GameObject NPCTargetCursor = null;
 
     public UnitLeader leader = null;
+    Rigidbody rb;
+    void Start()
+    {
+        GunTransform = transform.Find("Gun");
 
+        CurrentHP = MaxHP;
+    }
     private new void Awake()
     {
         base.Awake();
 
         leader = GetComponent<UnitLeader>();
+        rb = GetComponent<Rigidbody>();
+    }
+
+    private void LateUpdate()
+    {
+        Debug.Log(rb.velocity);   
     }
 
     private GameObject GetTargetCursor()
@@ -29,13 +41,7 @@ public class PlayerAgent : Agent
 
         return TargetCursor;
     }
-    private GameObject GetNPCTargetCursor()
-    {
-        if (NPCTargetCursor == null)
-            NPCTargetCursor = Instantiate(NPCTargetCursorPrefab);
 
-        return NPCTargetCursor;
-    }
     public void AimAtPosition(Vector3 pos)
     {
         GetTargetCursor().transform.position = pos;
@@ -48,18 +54,9 @@ public class PlayerAgent : Agent
         }
     }
 
-    /*public void NPCShootToPosition(Vector3 pos)
-    {
-        GetNPCTargetCursor().transform.position = pos;
-
-        leader.m_Squad.ShootToPosition(pos);
-    }*/
-
     public void NPCShootToPosition(Vector3 pos)
     {
-        GetNPCTargetCursor().transform.position = pos;
-
-        leader.m_Squad.SetTarget(GetNPCTargetCursor());
+        StartCoroutine(InstantiateTarget(pos, 5f));
     }
 
     protected override void OnHealthChange()
@@ -71,14 +68,31 @@ public class PlayerAgent : Agent
     {
     }
 
-    #region MonoBehaviour Methods
-    void Start()
+    IEnumerator InstantiateTarget(Vector3 position, float time)
     {
-        GunTransform = transform.Find("Gun");
+        if (NPCTargetCursor) Destroy(NPCTargetCursor);
 
-        CurrentHP = MaxHP;
+        GameObject target = Instantiate(NPCTargetCursorPrefab);
+        target.transform.position = position;
+
+        UI_CircleSlider circle = target.GetComponentInChildren<UI_CircleSlider>();
+
+        NPCTargetCursor = target;
+
+        leader?.m_Squad?.SetTarget(target);
+
+        float startTime = Time.time;
+
+
+        while(time > Time.time - startTime)
+        {
+            circle?.SetFillAmount(1f - (Time.time - startTime) / time);
+
+            yield return null;
+        }
+
+        if(target) Destroy(target);
+
+        //leader.m_Squad.SetTarget(null);
     }
-
-    #endregion
-
 }

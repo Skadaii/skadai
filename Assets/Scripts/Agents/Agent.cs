@@ -37,6 +37,9 @@ public class Agent : MonoBehaviour, IDamageable
 
     private void OnEnable()
     {
+        CurrentHP = MaxHP;
+        IsDead    = false;
+
         if (HPBarPrefab != null)
         {
             GameObject go = Instantiate(HPBarPrefab, transform);
@@ -91,13 +94,26 @@ public class Agent : MonoBehaviour, IDamageable
     public virtual void ShootForward()
     {
         // instantiate bullet
-        if (BulletPrefab)
+        if (BulletPrefab && !GunCheckObstacle())
         {
-            if (Physics.Raycast(GunTransform.position, GunTransform.position + GunTransform.up, GunTransform.lossyScale.y)) return;
+            GameObject bullet = Instantiate(BulletPrefab, GunTransform.position, Quaternion.identity);
 
-            GameObject bullet = Instantiate(BulletPrefab, GunTransform.position + transform.forward * 0.5f, Quaternion.identity);
+            if (bullet.TryGetComponent(out Bullet bulletComp))
+            {
+                bulletComp.IgnoreMask = ~ (1 << gameObject.layer);
+            }
+
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             rb.AddForce(transform.forward * BulletPower);
         }
+    }
+
+    protected bool GunCheckObstacle()
+    {
+        Vector3 start = GunTransform.position - GunTransform.up * GunTransform.lossyScale.y;
+        Vector3 end = GunTransform.position + GunTransform.up * GunTransform.lossyScale.y;
+        Ray ray = new Ray(start, end - start);
+
+        return Physics.SphereCast(ray, GunTransform.lossyScale.x * 0.5f, Vector3.Distance(start, end), ~(1 << gameObject.layer), QueryTriggerInteraction.Ignore);
     }
 }

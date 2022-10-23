@@ -27,7 +27,7 @@ public class TurretAgent : AIAgent
     {
         float minDistance = float.MaxValue;
 
-        Target = null;
+        GameObject newTarget = null;
 
         AgentTrespassers.ForEach(agent =>
         {
@@ -36,8 +36,10 @@ public class TurretAgent : AIAgent
             if (distance < minDistance)
             {
                 minDistance = distance;
-                Target = agent.gameObject;
+                newTarget = agent.gameObject;
             }
         });
+
+        SetTarget(newTarget);
     }
 }
