@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UnitSquad))]
 public class SquadController : MonoBehaviour
@@ -29,14 +30,23 @@ public class SquadController : MonoBehaviour
         float spawnAngle = Mathf.PI * 2.0f / unitCount;
         for (int i = 0; i < unitCount; i++)
         {
-            float currentAngle = spawnAngle * i;
-            Vector3 spawnPos = startTransform.position + (Vector3.right * Mathf.Cos(currentAngle) + Vector3.forward * Mathf.Sin(currentAngle)) * 2.0f;
+            Vector3 spawnPos;
+
+            if (m_Squad.formation)
+            {
+                spawnPos = m_Squad.formation.ComputePosition(startTransform.position, startTransform.rotation, i);
+            }
+            else
+            {
+                float currentAngle = spawnAngle * i;
+                spawnPos = startTransform.position + (Vector3.right * Mathf.Cos(currentAngle) + Vector3.forward * Mathf.Sin(currentAngle)) * 2.0f;
+            }
+
             GameObject unitInst = Instantiate(unitPrefab, spawnPos, startTransform.rotation);
             Unit unit = unitInst.GetComponent<Unit>();
 
             unitList.Add(unit);
         }
-
 
         m_Squad.Units = unitList;
     }

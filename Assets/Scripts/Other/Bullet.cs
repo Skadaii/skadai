@@ -5,6 +5,8 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     private GameObject HitFX;
+    public GameObject Shooter = null;
+    
     Rigidbody RB;
 
     public float Duration = 2f;
@@ -32,7 +34,7 @@ public class Bullet : MonoBehaviour
 
             if (damagedAgent == null) damagedAgent = hit.collider.gameObject.GetComponent<IDamageable>();
 
-            damagedAgent?.AddDamage(10);
+            damagedAgent?.AddDamage(10, Shooter);
 
             GameObject hitParticles = Instantiate(HitFX, null);
 

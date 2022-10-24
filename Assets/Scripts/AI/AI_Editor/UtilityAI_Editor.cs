@@ -64,8 +64,9 @@ public class UtilityAI_Editor : Editor
             return;
 
         ActionsProperty = serializedObject.FindProperty("Actions");
-        SerializedObject ActionsObject = new SerializedObject(ActionsProperty.objectReferenceValue);
-        BlackboardProperty = ActionsObject.FindProperty("Blackboard");
+
+        if (utilityAI.Actions != null)
+            SetBlackboardProperty();
 
         ComputeComponentsAndMethods(utilityAI);
     }
@@ -104,7 +105,10 @@ public class UtilityAI_Editor : Editor
 
         serializedObject.Update();
 
+        EditorGUI.BeginChangeCheck();
         EditorGUILayout.PropertyField(ActionsProperty);
+        if (EditorGUI.EndChangeCheck())
+            SetBlackboardProperty();
 
         if (utilityAI.Actions != null)
         {
@@ -116,6 +120,8 @@ public class UtilityAI_Editor : Editor
 
             EditorGUILayout.PropertyField(BlackboardProperty);
             DrawActions(utilityAI.Actions);
+
+            BlackboardProperty.serializedObject.ApplyModifiedProperties();
         }
         else
         {
@@ -126,7 +132,7 @@ public class UtilityAI_Editor : Editor
             }
         }
 
-        BlackboardProperty.serializedObject.ApplyModifiedProperties();
+        ActionsProperty.serializedObject.ApplyModifiedProperties();
         serializedObject.ApplyModifiedProperties();
     }
 
@@ -152,6 +158,16 @@ public class UtilityAI_Editor : Editor
 
         UtilityAI utilityAI = target as UtilityAI;
         utilityAI.Actions = asset;
+        SetBlackboardProperty();
+    }
+
+    private void SetBlackboardProperty()
+    {
+        if (ActionsProperty.objectReferenceValue != null)
+        {
+            SerializedObject ActionsObject = new SerializedObject(ActionsProperty.objectReferenceValue);
+            BlackboardProperty = ActionsObject.FindProperty("Blackboard");
+        }
     }
 
     public void DrawActions(UAI_ActionSet uai_actions)
@@ -219,8 +235,6 @@ public class UtilityAI_Editor : Editor
             if (GUILayout.Button("Remove method"))
                 ToRemoveMethod = method;
 
-            UtilityAI utilityAI = target as UtilityAI;
-
             EditorGUI.BeginChangeCheck();
 
             method.ComponentIndex = EditorGUILayout.Popup("Component: ", method.ComponentIndex, ComponentsName.ToArray());
@@ -229,8 +243,7 @@ public class UtilityAI_Editor : Editor
             if (EditorGUI.EndChangeCheck())
             {
                 method.UpdateMethodInfo(ComponentsName[method.ComponentIndex],
-                    MethodsName.ElementAt(method.ComponentIndex).Value.ElementAt(method.MethodIndex),
-                    utilityAI);
+                    MethodsName.ElementAt(method.ComponentIndex).Value.ElementAt(method.MethodIndex));
             }
         }
     }
@@ -241,8 +254,6 @@ public class UtilityAI_Editor : Editor
 
         if (consideration.Show)
         {
-            UtilityAI utilityAI = target as UtilityAI;
-
             EditorGUI.BeginChangeCheck();
 
             consideration.ComponentIndex = EditorGUILayout.Popup("Component: ", consideration.ComponentIndex, ComponentsName.ToArray());
@@ -251,8 +262,7 @@ public class UtilityAI_Editor : Editor
             if (EditorGUI.EndChangeCheck())
             {
                 consideration.UpdateMethodInfo(ComponentsName[consideration.ComponentIndex],
-                    MethodsName.ElementAt(consideration.ComponentIndex).Value.ElementAt(consideration.MethodIndex),
-                    utilityAI);
+                    MethodsName.ElementAt(consideration.ComponentIndex).Value.ElementAt(consideration.MethodIndex));
             }
 
             EditorGUILayout.CurveField("Curve", consideration.AnimationCurve);

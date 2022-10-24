@@ -13,13 +13,22 @@ public class UAI_Consideration
     public Component Component;
     public MethodInfo MethodInfo;
 
+    public string ComponentName = string.Empty;
+    public string MethodName = string.Empty;
+
     public int ComponentIndex;
     public int MethodIndex;
 
-    public void UpdateMethodInfo(string componentName, string methodName, UtilityAI utilityAI)
+    public void Setup(UtilityAI utilityAI)
     {
-        Component = utilityAI.GetComponent(componentName);
-        MethodInfo = Component.GetType().GetMethod(methodName);
+        Component = utilityAI.GetComponent(ComponentName);
+        MethodInfo = Component.GetType().GetMethod(MethodName);
+    }
+
+    public void UpdateMethodInfo(string componentName, string methodName)
+    {
+        ComponentName = componentName;
+        MethodName = methodName;
     }
 
     public float Evaluate()

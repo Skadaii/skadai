@@ -23,6 +23,8 @@ public class Agent : MonoBehaviour, IDamageable
     protected float ShootFrequency = 1f;
 
     protected float NextShootDate = 0f;
+    
+    public UnityEvent<GameObject> OnHit = new UnityEvent<GameObject>();
 
     [SerializeField] private float HPBarHeight = 1.5f;
     [SerializeField] private   GameObject   HPBarPrefab;
@@ -67,6 +69,8 @@ public class Agent : MonoBehaviour, IDamageable
 
             OnDeath();
         }
+        else
+            OnHit.Invoke(attacker);
 
         OnHealthChange();
     }
@@ -105,6 +109,9 @@ public class Agent : MonoBehaviour, IDamageable
 
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             rb.AddForce(transform.forward * BulletPower);
+
+            Bullet bulletComp = bullet.GetComponent<Bullet>();
+            bulletComp.Shooter = gameObject;
         }
     }
 

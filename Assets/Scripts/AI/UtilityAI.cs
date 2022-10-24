@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(AIAgent))]
 public class UtilityAI : MonoBehaviour
 {
     public UAI_ActionSet Actions;
 
-    private AIAgent agent = null;
 
     struct BestValue
     {
@@ -18,12 +16,10 @@ public class UtilityAI : MonoBehaviour
 
     private void Start()
     {
-        agent = GetComponent<AIAgent>();
-
         Actions = Instantiate(Actions);
 
         if (Actions != null)
-            Actions.Setup();
+            Actions.Setup(this);
     }
 
     public void Update()
@@ -34,9 +30,6 @@ public class UtilityAI : MonoBehaviour
 
         foreach (UAI_Action action in Actions.actions)
         {
-            if (!action.consideration.IsValid())
-                continue;
-
             float newHeuristic = action.consideration.Evaluate();
             if (newHeuristic > bestValue.heuristic)
             {

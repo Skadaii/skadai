@@ -1,15 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using UnityEditor;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
+using static UnityEngine.UI.CanvasScaler;
 
 public class UnitSquad : MonoBehaviour
 {
     public FormationRule formation = null;
 
+    [SerializeField] private GameObject virtualLeaderPrefab = null;
+
     public UnitLeader leader = null;
 
     private List<Unit> units = new List<Unit>();
     private Vector3[] unitPositions;
+
+    [SerializeField] private float defendRange = 2f;
+    private Unit defender = null;
+    private GameObject leaderAttacker = null;
 
     public List<Unit> Units
     {
@@ -19,7 +29,7 @@ public class UnitSquad : MonoBehaviour
             units = value;
 
             foreach (Unit unit in units)
-                unit.m_Squad = this;
+                unit.SetSquad(this);
 
             unitPositions = new Vector3[units.Count];
         }
@@ -33,27 +43,63 @@ public class UnitSquad : MonoBehaviour
     private void OnInitializeLeader()
     {
         // If leader is null, set a virtual one
-        leader ??= CreateVirtuaLeader("Leader");
+        leader ??= CreateVirtuaLeader();
 
-        leader.m_Squad = this;
+        leader.SetSquad(this);
 
-        leader.GetComponent<Movement>().OnMoveChange.AddListener(UpdatePosition);
+        leader.GetComponent<Movement>().OnMoveChange.AddListener(UpdatePositions);
     }
 
     private void OnDestroy()
     {
-        leader?.GetComponent<Movement>().OnMoveChange.RemoveListener(UpdatePosition);
+        if (leader && leader.TryGetComponent(out Movement leaderMovement))
+            leaderMovement.OnMoveChange.RemoveListener(UpdatePositions);
     }
 
-    private void Update()
+    public void AskDefenderUnit(GameObject attacker)
     {
-    }
+        leaderAttacker = attacker;
 
-    public void UpdatePosition()
-    {
+        Unit nearestUnit = null;
+        float minDist = Mathf.Infinity;
+
+        // Get the nearest unit to the line leader/attacker 
         for (int i = 0; i < units.Count; i++)
         {
-            if (!units[i].gameObject.activeInHierarchy) continue;
+            Unit unit = units[i];
+            
+            if (!unit.gameObject.activeInHierarchy) continue;
+
+            float dist = Vector3.Distance(unit.transform.position, DefenderPosition);
+            if (dist < minDist)
+            {
+                nearestUnit = unit;
+                minDist = dist;
+            }
+        }
+
+        defender = nearestUnit;
+    }
+
+    Vector3 DefenderPosition => Vector3.Normalize(leaderAttacker.transform.position - leader.transform.position) * defendRange;
+
+    public void UpdatePositions()
+    {
+        if (defender)
+        {
+            Vector3 pos = leader.transform.position + DefenderPosition;
+
+            defender.movement.MoveTo(pos);
+        }
+
+        for (int i = 0; i < units.Count; i++)
+        {
+            if (!unit.gameObject.activeInHierarchy) continue;
+            
+            Unit unit = units[i];
+
+            if (unit == defender)
+                continue;
 
             Vector3 pos = ComputeUnitPosition(i);
             units[i].movement.MoveTo(pos);
@@ -97,12 +143,12 @@ public class UnitSquad : MonoBehaviour
         return leader.transform.position;
     }
 
-    UnitLeader CreateVirtuaLeader(string leaderName)
+    UnitLeader CreateVirtuaLeader()
     {
-        GameObject leaderGO = new GameObject(leaderName);
-        leaderGO.AddComponent<NPCMovement>();
-        leaderGO.AddComponent<PatrolAction>().patrolPoints = GetComponentsInChildren<Transform>();
+        GameObject leader = Instantiate(virtualLeaderPrefab, transform.position, transform.rotation);
 
-        return leaderGO.AddComponent<UnitLeader>();
+        leader.GetComponent<PatrolAction>().patrolPoints = GetComponentsInChildren<Transform>();
+
+        return leader.GetComponent<UnitLeader>();
     }
 }
