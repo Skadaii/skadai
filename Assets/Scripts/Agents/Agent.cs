@@ -59,7 +59,7 @@ public class Agent : MonoBehaviour, IDamageable
     }
 
 
-    public void AddDamage(int amount)
+    public void AddDamage(int amount, GameObject attacker)
     {
         CurrentHP -= amount;
         if (CurrentHP <= 0)
@@ -105,13 +105,12 @@ public class Agent : MonoBehaviour, IDamageable
             if (bullet.TryGetComponent(out Bullet bulletComp))
             {
                 bulletComp.IgnoreMask = ~ (1 << gameObject.layer);
+                bulletComp.Shooter = gameObject;
             }
 
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             rb.AddForce(transform.forward * BulletPower);
 
-            Bullet bulletComp = bullet.GetComponent<Bullet>();
-            bulletComp.Shooter = gameObject;
         }
     }
 
