@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UAI_Blackboard : ScriptableObject
+public class UAI_Blackboard : MonoBehaviour
 {
-    
+
 }
