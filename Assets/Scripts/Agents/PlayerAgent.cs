@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class PlayerAgent : Agent
 {
@@ -27,11 +28,6 @@ public class PlayerAgent : Agent
 
         leader = GetComponent<UnitLeader>();
         rb = GetComponent<Rigidbody>();
-    }
-
-    private void LateUpdate()
-    {
-        Debug.Log(rb.velocity);   
     }
 
     private GameObject GetTargetCursor()
@@ -94,5 +90,10 @@ public class PlayerAgent : Agent
         if(target) Destroy(target);
 
         //leader.m_Squad.SetTarget(null);
+    }
+
+    public float IsAttacked()
+    {
+        return Convert.ToSingle(Assaillant != null);
     }
 }

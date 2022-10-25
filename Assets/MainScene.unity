@@ -330,7 +330,7 @@ GameObject:
   - component: {fileID: 1003314286}
   - component: {fileID: 1003314285}
   m_Layer: 0
-  m_Name: SquadController (1)
+  m_Name: SquadController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348,9 +348,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55b64ba2e4932304ab9e2f400cda7e6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitPrefab: {fileID: 5565563887930918629, guid: 6e89a9e53ee0d0940b0f1d78853f81fa,
-    type: 3}
-  unitCount: 10
+  healerUnitPrefab: {fileID: 0}
+  supportUnitPrefab: {fileID: 0}
+  healerUnitCount: 3
+  supportUnitCount: 0
 --- !u!114 &1003314286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,7 +365,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   formation: {fileID: 0}
+  virtualLeaderPrefab: {fileID: 0}
   leader: {fileID: 0}
+  defendRange: 2
 --- !u!4 &1003314287
 Transform:
   m_ObjectHideFlags: 0
@@ -373,7 +376,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1003314284}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.7, y: 1.0833335, z: -13}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -655,9 +658,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55b64ba2e4932304ab9e2f400cda7e6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitPrefab: {fileID: 5565563887930918629, guid: 6e89a9e53ee0d0940b0f1d78853f81fa,
+  healerUnitPrefab: {fileID: 5565563887930918629, guid: adc8ff647a3e9974495d22554fae04dc,
     type: 3}
-  unitCount: 10
+  supportUnitPrefab: {fileID: 5565563887930918629, guid: 91fa7276aa35ae341bfed3c7b11a62f1,
+    type: 3}
+  healerUnitCount: 10
+  supportUnitCount: 10
 --- !u!114 &1716431412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -671,7 +677,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   formation: {fileID: 11400000, guid: bf75f1cdf0ae2174cae0dd1f9f55922c, type: 2}
+  virtualLeaderPrefab: {fileID: 0}
   leader: {fileID: 1875079903}
+  defendRange: 2
 --- !u!4 &1716431413
 Transform:
   m_ObjectHideFlags: 0
@@ -680,7 +688,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1716431410}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 49.833336, y: 1.0833335, z: -48.595833}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1332,6 +1340,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 699720244595819133, guid: bd9586a24854d764086a69e5a1e937c8,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2994971982193998696, guid: bd9586a24854d764086a69e5a1e937c8,
         type: 3}
       propertyPath: m_PresetInfoIsWorld
@@ -1408,6 +1421,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4886261165655824618, guid: 2e6a27eb4d67dbd409df714a76de06cd,
         type: 3}
+    - target: {fileID: 3361780827870377503, guid: bd9586a24854d764086a69e5a1e937c8,
+        type: 3}
+      propertyPath: speciality
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd9586a24854d764086a69e5a1e937c8, type: 3}
 --- !u!1001 &5565563887109877130

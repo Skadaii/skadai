@@ -145,11 +145,15 @@ MonoBehaviour:
   BulletPower: 1000
   BulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
     type: 3}
-  MaxHP: 500
-  ShootFrequency: 0.25
+  MaxHP: 250
+  ShootFrequency: 0.75
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
   HPBarHeight: 1.5
   HPBarPrefab: {fileID: 1553091337664375409, guid: dfdc7fa0997f2554b808ddef72b14e55,
     type: 3}
+  Assaillant: {fileID: 0}
 --- !u!1 &49960627115765623
 GameObject:
   m_ObjectHideFlags: 0

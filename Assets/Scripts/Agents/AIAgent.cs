@@ -106,17 +106,18 @@ public class AIAgent : Agent, IDamageable
             if (bullet.TryGetComponent(out Bullet bulletComp))
             {
                 bulletComp.IgnoreMask = ~(1 << gameObject.layer);
+                bulletComp.Shooter = gameObject;
             }
 
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
             if (Target)
             {
-                Vector3 bullerTrajectory = Target.transform.position - bullet.transform.position;
+                Vector3 bulletTrajectory = Target.transform.position - bullet.transform.position;
 
-                bullerTrajectory = Vector3.Normalize(new Vector3(bullerTrajectory.x, 0f, bullerTrajectory.z));
+                bulletTrajectory = Vector3.Normalize(new Vector3(bulletTrajectory.x, 0f, bulletTrajectory.z));
 
-                rb.AddForce(bullerTrajectory * BulletPower);
+                rb.AddForce(bulletTrajectory * BulletPower);
             }
             else
             {

@@ -115,6 +115,7 @@ GameObject:
   - component: {fileID: 3361780827870377501}
   - component: {fileID: 3361780827870377502}
   - component: {fileID: 3361780827870377503}
+  - component: {fileID: 699720244595819133}
   m_Layer: 7
   m_Name: Player
   m_TagString: Untagged
@@ -248,6 +249,9 @@ MonoBehaviour:
     type: 3}
   MaxHP: 100
   ShootFrequency: 1
+  OnHit:
+    m_PersistentCalls:
+      m_Calls: []
   HPBarHeight: 1.5
   HPBarPrefab: {fileID: 1553091337664375409, guid: dfdc7fa0997f2554b808ddef72b14e55,
     type: 3}
@@ -285,4 +289,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 0}
   agent: {fileID: 0}
-  m_Squad: {fileID: 0}
+--- !u!114 &699720244595819133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3361780827870377494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d30a297dcff61ad4b81b66666d6ce34b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActionSetName: SquadActionSet
+  ActionSet: {fileID: 11400000, guid: a73dba2056edce2458f86a297c6eaac9, type: 2}

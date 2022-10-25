@@ -17,8 +17,9 @@ public class UnitSquad : MonoBehaviour
     private List<Unit> units = new List<Unit>();
     private Vector3[] unitPositions;
 
-    [SerializeField] private float defendRange = 2f;
-    private Unit defender = null;
+    public float defendRange = 2f;
+    //private Unit defender = null;
+    //private Unit healer = null;
     private GameObject leaderAttacker = null;
 
     public List<Unit> Units
@@ -56,59 +57,72 @@ public class UnitSquad : MonoBehaviour
             leaderMovement.OnMoveChange.RemoveListener(UpdatePositions);
     }
 
-    public void AskDefenderUnit(GameObject attacker)
-    {
-        leaderAttacker = attacker;
+    //public void OnLeaderNeedHeal()
+    //{
+    //    float minDist = Mathf.Infinity;
 
-        Unit nearestUnit = null;
-        float minDist = Mathf.Infinity;
+    //    Vector3 dir = Vector3.zero;
 
-        // Get the nearest unit to the line leader/attacker 
-        for (int i = 0; i < units.Count; i++)
-        {
-            Unit unit = units[i];
-            
-            if (!unit.gameObject.activeInHierarchy) continue;
+    //    Get the nearest unit to the line leader/ attacker
+    //    for (int i = 0; i < units.Count; i++)
+    //    {
+    //        Unit unit = units[i];
 
-            float dist = Vector3.Distance(unit.transform.position, DefenderPosition);
-            if (dist < minDist)
-            {
-                nearestUnit = unit;
-                minDist = dist;
-            }
-        }
+    //        if (!unit.gameObject.activeInHierarchy || unit.speciality != UnitSpeciality.Healer || defender == unit) continue;
 
-        defender = nearestUnit;
-    }
+    //        dir = leader.transform.position - unit.transform.position;
 
-    Vector3 DefenderPosition => Vector3.Normalize(leaderAttacker.transform.position - leader.transform.position) * defendRange;
+    //        float dist = Vector3.SqrMagnitude(dir);
+
+    //        if (dist < minDist * minDist)
+    //        {
+    //            healer = unit;
+    //            minDist = dist;
+    //        }
+    //    }
+
+    //    if (healer == null) return;
+
+    //    healer.movement.MoveTo(leader.transform.position + dir.normalized * 2f);
+
+    //    Debug.Log("Healing !");
+    //}
+
+    //public void OnLeaderNeedCover(Vector3 position)
+    //{
+    //    float minDist = Mathf.Infinity;
+
+    //    Get the nearest unit to the line leader/ attacker
+    //    for (int i = 0; i < units.Count; i++)
+    //    {
+    //        Unit unit = units[i];
+
+    //        if (!unit.gameObject.activeInHierarchy) continue;
+
+    //        float dist = Vector3.Distance(unit.transform.position, position);
+    //        if (dist < minDist)
+    //        {
+    //            defender = unit;
+    //            minDist = dist;
+    //        }
+    //    }
+
+    //    defender.movement.MoveTo(position);
+    //}
 
     public void UpdatePositions()
     {
-        if (defender)
-        {
-            Vector3 pos = leader.transform.position + DefenderPosition;
-
-            defender.movement.MoveTo(pos);
-        }
-
         for (int i = 0; i < units.Count; i++)
         {
             Unit unit = units[i];
 
-            if (!unit.gameObject.activeInHierarchy || unit == defender) continue;
+            if (!unit.gameObject.activeInHierarchy || unit.HasDuty() /*|| unit == defender || unit == healer*/) continue;
 
             Vector3 pos = ComputeUnitPosition(i);
             units[i].movement.MoveTo(pos);
             unitPositions[i] = pos;
         }
     }
-
-    /*public void ShootToPosition(Vector3 position)
-    {
-        for (int i = 0; i < units.Count; i++)
-            units[i].agent.ShootToPosition(position);
-    }*/
 
     public void SetTarget(GameObject target)
     {

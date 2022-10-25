@@ -96,12 +96,13 @@ GameObject:
   - component: {fileID: 5565563887930918649}
   - component: {fileID: 5565563887930918653}
   - component: {fileID: 5565563887930918642}
-  - component: {fileID: 2373518032967929778}
+  - component: {fileID: 2940325120902553051}
   - component: {fileID: 614356075419529752}
   - component: {fileID: 954485431784399736}
   - component: {fileID: 996116825863577449}
+  - component: {fileID: 752963434511280056}
   m_Layer: 7
-  m_Name: AIAgent
+  m_Name: SupportAgent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -146,6 +147,7 @@ MonoBehaviour:
   HPBarHeight: 1.5
   HPBarPrefab: {fileID: 1553091337664375409, guid: dfdc7fa0997f2554b808ddef72b14e55,
     type: 3}
+  Assaillant: {fileID: 0}
   HearingRadius: 10
   SightAngle: 0.5
   PrivacyRadius: 2
@@ -199,7 +201,7 @@ MonoBehaviour:
   OnMoveChange:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2373518032967929778
+--- !u!114 &2940325120902553051
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -208,11 +210,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 5565563887930918629}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46f3bf48a01dfcf409fb6094f3b44c91, type: 3}
+  m_Script: {fileID: 11500000, guid: 6354954aecc82a94a8d1cc27f34c1075, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   movement: {fileID: 0}
   agent: {fileID: 0}
+  isBeingHealed: 0
+  defendRange: 2
 --- !u!135 &614356075419529752
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -256,6 +260,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &752963434511280056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5565563887930918629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d30a297dcff61ad4b81b66666d6ce34b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActionSetName: SupportActionsSet
+  ActionSet: {fileID: 11400000, guid: 4ef12eb87914d074db23ad36d644e051, type: 2}
 --- !u!1 &5565563888361350084
 GameObject:
   m_ObjectHideFlags: 0

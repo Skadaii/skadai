@@ -96,12 +96,13 @@ GameObject:
   - component: {fileID: 5565563887930918649}
   - component: {fileID: 5565563887930918653}
   - component: {fileID: 5565563887930918642}
-  - component: {fileID: 2373518032967929778}
+  - component: {fileID: 6812468769641617000}
   - component: {fileID: 614356075419529752}
   - component: {fileID: 954485431784399736}
   - component: {fileID: 996116825863577449}
+  - component: {fileID: 752963434511280056}
   m_Layer: 7
-  m_Name: AIAgent
+  m_Name: HealerAgent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -146,6 +147,7 @@ MonoBehaviour:
   HPBarHeight: 1.5
   HPBarPrefab: {fileID: 1553091337664375409, guid: dfdc7fa0997f2554b808ddef72b14e55,
     type: 3}
+  Assaillant: {fileID: 0}
   HearingRadius: 10
   SightAngle: 0.5
   PrivacyRadius: 2
@@ -199,7 +201,7 @@ MonoBehaviour:
   OnMoveChange:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2373518032967929778
+--- !u!114 &6812468769641617000
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -208,11 +210,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 5565563887930918629}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46f3bf48a01dfcf409fb6094f3b44c91, type: 3}
+  m_Script: {fileID: 11500000, guid: 043992abc86da9b479ea90979157cc2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   movement: {fileID: 0}
   agent: {fileID: 0}
+  isBeingHealed: 0
+  healPower: 5
+  healingRadius: 2
 --- !u!135 &614356075419529752
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -256,6 +261,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &752963434511280056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5565563887930918629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d30a297dcff61ad4b81b66666d6ce34b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActionSetName: HealerActionsSet
+  ActionSet: {fileID: 11400000, guid: 1a1d66bc4d089524bb239442674ef96e, type: 2}
 --- !u!1 &5565563888361350084
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,7 +337,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4171de2ff5c2c56459af4947b2c3530b, type: 2}
+  - {fileID: 2100000, guid: 9713d7a09e1cb4942addf0329f69dcf7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

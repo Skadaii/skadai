@@ -6,8 +6,8 @@ public class UnitLeader : Unit
 {
     void OnDestroy()
     {
-        if (m_Squad && agent) // Only if the leader is virtual
-            agent.OnHit.RemoveListener(m_Squad.AskDefenderUnit);
+        //if (m_Squad && agent) // Only if the leader is virtual
+        //    agent.OnHit.RemoveListener(m_Squad.AskDefenderUnit);
     }
 
     public override void SetSquad(UnitSquad squad)
@@ -19,12 +19,25 @@ public class UnitLeader : Unit
             return;
         }
 
-        if (m_Squad)
-            agent.OnHit.RemoveListener(m_Squad.AskDefenderUnit);
+        //if (m_Squad)
+        //    agent.OnHit.RemoveListener(m_Squad.AskDefenderUnit);
 
         base.SetSquad(squad);
 
-        if (m_Squad)
-            agent.OnHit.AddListener(m_Squad.AskDefenderUnit);
+        //if (m_Squad)
+        //    agent.OnHit.AddListener(m_Squad.AskDefenderUnit);
+    }
+
+    public void NeedCover()
+    {
+        Vector3 position = agent.transform.position + Vector3.Normalize(agent.Assaillant.transform.position - transform.position) * m_Squad.defendRange;
+
+        //m_Squad.OnLeaderNeedCover(position);
+    }
+
+    public void NeedHeal()
+    {
+        Debug.Log("NEED HEAL MF !");
+        //m_Squad.OnLeaderNeedHeal();
     }
 }

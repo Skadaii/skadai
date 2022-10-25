@@ -6,8 +6,10 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(UnitSquad))]
 public class SquadController : MonoBehaviour
 {
-    [SerializeField] private GameObject unitPrefab = null;
-    [SerializeField] private int unitCount = 3;
+    [SerializeField] private GameObject healerUnitPrefab = null;
+    [SerializeField] private GameObject supportUnitPrefab = null;
+    [SerializeField] private int healerUnitCount = 3;
+    [SerializeField] private int supportUnitCount = 3;
 
     private UnitSquad m_Squad = null;
 
@@ -18,7 +20,7 @@ public class SquadController : MonoBehaviour
 
     private void Start()
     {
-        if (unitPrefab)
+        if (healerUnitPrefab && supportUnitPrefab)
             InitializeUnits();
     }
 
@@ -27,6 +29,7 @@ public class SquadController : MonoBehaviour
         List<Unit> unitList = new List<Unit>();
         Transform startTransform = (m_Squad.leader ?? this as Component).transform;
 
+        int unitCount = healerUnitCount + supportUnitCount;
         float spawnAngle = Mathf.PI * 2.0f / unitCount;
         for (int i = 0; i < unitCount; i++)
         {
@@ -42,7 +45,11 @@ public class SquadController : MonoBehaviour
                 spawnPos = startTransform.position + (Vector3.right * Mathf.Cos(currentAngle) + Vector3.forward * Mathf.Sin(currentAngle)) * 2.0f;
             }
 
-            GameObject unitInst = Instantiate(unitPrefab, spawnPos, startTransform.rotation);
+            GameObject unitInst;
+
+            if (i >= healerUnitCount) unitInst = Instantiate(supportUnitPrefab, spawnPos, startTransform.rotation);
+            else                      unitInst = Instantiate(healerUnitPrefab, spawnPos, startTransform.rotation);
+
             Unit unit = unitInst.GetComponent<Unit>();
 
             unitList.Add(unit);

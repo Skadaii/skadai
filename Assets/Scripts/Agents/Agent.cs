@@ -31,6 +31,9 @@ public class Agent : MonoBehaviour, IDamageable
     private UI_HealthBar HPBar;
 
     private GameObject ExplodeFX;
+    public  GameObject Assaillant;
+
+    Coroutine AttackedStateCoroutine;
 
     protected void Awake()
     {
@@ -54,13 +57,27 @@ public class Agent : MonoBehaviour, IDamageable
 
     private void OnDisable()
     {
-        if(HPBar != null) HPBar.Destroy();
+        if (HPBar != null) HPBar.Destroy();
 
+        if (AttackedStateCoroutine != null)
+        {
+            StopCoroutine(AttackedStateCoroutine);
+            AttackedStateCoroutine = null;
+        }
     }
-
 
     public void AddDamage(int amount, GameObject attacker)
     {
+        Assaillant = attacker;
+
+        if (AttackedStateCoroutine != null)
+        {
+            StopCoroutine(AttackedStateCoroutine);
+            AttackedStateCoroutine = null;
+        }
+
+        AttackedStateCoroutine = StartCoroutine(AttackedStateCooldown(3f));
+
         CurrentHP -= amount;
         if (CurrentHP <= 0)
         {
@@ -74,11 +91,14 @@ public class Agent : MonoBehaviour, IDamageable
 
         OnHealthChange();
     }
-    public void AddHealth(int amount)
+
+    public bool AddHealth(int amount)
     {
         CurrentHP = Mathf.Min(CurrentHP + amount, MaxHP);
 
         OnHealthChange();
+
+        return CurrentHP >= MaxHP;
     }
 
     protected virtual void OnHealthChange() 
@@ -121,5 +141,19 @@ public class Agent : MonoBehaviour, IDamageable
         Ray ray = new Ray(start, end - start);
 
         return Physics.SphereCast(ray, GunTransform.lossyScale.x * 0.5f, Vector3.Distance(start, end), ~(1 << gameObject.layer), QueryTriggerInteraction.Ignore);
+    }
+
+    IEnumerator AttackedStateCooldown(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        Assaillant = null;
+
+        AttackedStateCoroutine = null;
+    }
+
+    public float GetLifePercent()
+    {
+        return (float)CurrentHP / (float)MaxHP;
     }
 }

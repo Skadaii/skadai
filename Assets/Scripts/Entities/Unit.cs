@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [RequireComponent(typeof(Movement))]
 public class Unit : MonoBehaviour
 {
-    public Movement movement = null;
-    public Agent agent = null;
+    [HideInInspector] public Movement movement = null;
+    [HideInInspector] public Agent agent = null;
+
+    [HideInInspector] public bool isBeingHealed;
 
     public UnitSquad m_Squad { get; private set; } = null;
 
@@ -18,4 +21,6 @@ public class Unit : MonoBehaviour
     }
 
     public virtual void SetSquad(UnitSquad squad) => m_Squad = squad;
+
+    public virtual bool HasDuty() { return false; }
 }
