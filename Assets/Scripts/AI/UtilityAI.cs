@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class UtilityAI : MonoBehaviour
 {
-    public UAI_ActionSet Actions;
-
+    public string ActionSetName = "NewActionSet";
+    public UAI_ActionSet ActionSet;
 
     struct BestValue
     {
@@ -16,10 +16,10 @@ public class UtilityAI : MonoBehaviour
 
     private void Start()
     {
-        Actions = Instantiate(Actions);
+        ActionSet = Instantiate(ActionSet);
 
-        if (Actions != null)
-            Actions.Setup(this);
+        if (ActionSet != null)
+            ActionSet.Setup(this);
     }
 
     public void Update()
@@ -28,7 +28,7 @@ public class UtilityAI : MonoBehaviour
         bestValue.heuristic = 0f;
         bestValue.action = null;
 
-        foreach (UAI_Action action in Actions.actions)
+        foreach (UAI_Action action in ActionSet.actions)
         {
             float newHeuristic = action.consideration.Evaluate();
             if (newHeuristic > bestValue.heuristic)
