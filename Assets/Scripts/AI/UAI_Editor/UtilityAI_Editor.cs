@@ -57,6 +57,7 @@ public class UtilityAI_Editor : Editor
     {
         public SerializedProperty AnimationCurveProperty;
         public CurveField CurveField;
+        public TextElement TextElement;
     }
 
     private SerializedShow SerializedActionsShow;
@@ -253,9 +254,12 @@ public class UtilityAI_Editor : Editor
             serializedConsideration.ShowFoldout = EditorUtils.CreateFoldout("Consideration", 15, Color.white, FlexDirection.Column);
             serializedConsideration.ShowFoldout.BindProperty(serializedConsideration.ShowProperty);
 
-            serializedConsideration.CurveField = new CurveField("Consideration Curve");
+            serializedConsideration.CurveField = new CurveField();
             serializedConsideration.CurveField.BindProperty(serializedConsideration.AnimationCurveProperty);
+            serializedConsideration.CurveField.style.height = 50;
 
+            serializedConsideration.TextElement = new TextElement();
+            serializedConsideration.TextElement.text = "Consideration Curve";
             #endregion
         }
     }
@@ -268,7 +272,6 @@ public class UtilityAI_Editor : Editor
         serializedMethod.ComponentPopup = new PopupField<string>("Component", ComponentsName, 0);
         serializedMethod.ComponentPopup.BindProperty(serializedMethod.ComponentStringProperty);
         serializedMethod.ComponentPopup.TrackPropertyValue(serializedMethod.ComponentStringProperty, delegate { MethodComponentChanged(serializedMethod); });
-
 
         if (!ComponentsName.Contains(serializedMethod.ComponentStringProperty.stringValue))
         {
@@ -320,6 +323,8 @@ public class UtilityAI_Editor : Editor
         actionsLabel.Add(SerializedActionsShow.ShowFoldout);
         actionsLabel.Add(AddActionButton);
 
+        SerializedActionsShow.ShowFoldout.Add(EditorUtils.CreateSpace(new Vector2(0, 5)));
+
         foreach (SerializedAction serializedAction in SerializedActions)
         {
             VisualElement actionLabel = EditorUtils.CreateLabel(1, 5, Color.gray, new Color(0.3f,0.3f,0.3f), FlexDirection.Column);
@@ -329,8 +334,8 @@ public class UtilityAI_Editor : Editor
 
             actionLabel.Add(serializedAction.ShowFoldout);
             actionLabel.Add(serializedAction.RemoveButton);
-            actionLabel.Add(EditorUtils.CreateSpace(new Vector2(0, 5)));
 
+            serializedAction.ShowFoldout.Add(EditorUtils.CreateSpace(new Vector2(0, 5)));
             serializedAction.ShowFoldout.Add(serializedAction.ActionNameTextField);
 
             #region Methods
@@ -342,7 +347,8 @@ public class UtilityAI_Editor : Editor
             
             methodslabel.Add(serializedAction.SerializedMethods.ShowFoldout);
             methodslabel.Add(serializedAction.SerializedMethods.AddMethodButton);
-            methodslabel.Add(EditorUtils.CreateSpace(new Vector3(0, 5)));
+
+            serializedAction.SerializedMethods.ShowFoldout.Add(EditorUtils.CreateSpace(new Vector3(0, 5)));
 
             foreach (SerializedMethod serializedMethod in serializedAction.SerializedMethods.SerializedListMethods)
             {
@@ -355,6 +361,7 @@ public class UtilityAI_Editor : Editor
                 methodLabel.Add(serializedMethod.ShowFoldout);
                 methodLabel.Add(serializedMethod.RemoveButton);
 
+                serializedMethod.ShowFoldout.Add(EditorUtils.CreateSpace(new Vector3(0, 5)));
                 serializedMethod.ShowFoldout.Add(serializedMethod.ComponentPopup);
                 serializedMethod.ShowFoldout.Add(serializedMethod.MethodPopup);
             }
@@ -371,6 +378,8 @@ public class UtilityAI_Editor : Editor
 
             serializedAction.SerializedConsideration.ShowFoldout.Add(serializedAction.SerializedConsideration.ComponentPopup);
             serializedAction.SerializedConsideration.ShowFoldout.Add(serializedAction.SerializedConsideration.MethodPopup);
+            serializedAction.SerializedConsideration.ShowFoldout.Add(EditorUtils.CreateSpace(new Vector2(0, 5)));
+            serializedAction.SerializedConsideration.ShowFoldout.Add(serializedAction.SerializedConsideration.TextElement);
             serializedAction.SerializedConsideration.ShowFoldout.Add(serializedAction.SerializedConsideration.CurveField);
 
             #endregion
