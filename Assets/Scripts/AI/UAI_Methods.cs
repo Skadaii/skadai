@@ -9,13 +9,11 @@ public class UAI_Method
     public Component Component;
     public MethodInfo MethodInfo;
 
-    public int ComponentIndex;
-    public int MethodIndex;
-
     public bool Show = false;
 
     public string ComponentName = string.Empty;
     public string MethodName = string.Empty;
+
     public void Setup(UtilityAI utilityAI)
     {
         Component = utilityAI.GetComponent(ComponentName);
