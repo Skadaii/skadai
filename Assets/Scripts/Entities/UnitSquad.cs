@@ -57,58 +57,76 @@ public class UnitSquad : MonoBehaviour
             leaderMovement.OnMoveChange.RemoveListener(UpdatePositions);
     }
 
-    //public void OnLeaderNeedHeal()
-    //{
-    //    float minDist = Mathf.Infinity;
+    public void AssignHealerTo(Unit target)
+    {
+        Vector3 targetPosition = target.transform.position;
+        float lowestSqrDistance = float.MaxValue;
+        HealerUnit nearestHealer = null;
 
-    //    Vector3 dir = Vector3.zero;
+        foreach (Unit unit in units)
+        {
+            if(unit == target)
+                continue;
 
-    //    Get the nearest unit to the line leader/ attacker
-    //    for (int i = 0; i < units.Count; i++)
-    //    {
-    //        Unit unit = units[i];
+            HealerUnit healer = unit as HealerUnit;
 
-    //        if (!unit.gameObject.activeInHierarchy || unit.speciality != UnitSpeciality.Healer || defender == unit) continue;
+            if (healer == null)
+                continue;
 
-    //        dir = leader.transform.position - unit.transform.position;
+            if (healer.target == leader)
+                continue;
 
-    //        float dist = Vector3.SqrMagnitude(dir);
+            if(target != leader)
+            {
+                if (healer.target != null) 
+                    continue;
 
-    //        if (dist < minDist * minDist)
-    //        {
-    //            healer = unit;
-    //            minDist = dist;
-    //        }
-    //    }
+                if (healer.agent.CurrentHP <= target.agent.CurrentHP) continue;
+            }
 
-    //    if (healer == null) return;
+            Vector3 healerPosition = healer.transform.position;
+            float sqrDistance = Vector3.SqrMagnitude(healerPosition - targetPosition);
 
-    //    healer.movement.MoveTo(leader.transform.position + dir.normalized * 2f);
+            if(lowestSqrDistance > sqrDistance)
+            {
+                lowestSqrDistance = sqrDistance;
+                nearestHealer = healer;
+            }
+        }
 
-    //    Debug.Log("Healing !");
-    //}
+        nearestHealer?.SetTarget(target);
+    }
 
-    //public void OnLeaderNeedCover(Vector3 position)
-    //{
-    //    float minDist = Mathf.Infinity;
+    public void AssignSupportTo(Unit target)
+    {
+        Vector3 targetPosition = target.transform.position;
+        float lowestSqrDistance = float.MaxValue;
+        SupportUnit nearestSupport = null;
 
-    //    Get the nearest unit to the line leader/ attacker
-    //    for (int i = 0; i < units.Count; i++)
-    //    {
-    //        Unit unit = units[i];
+        if (target.agent.Aggressor == null) return;
 
-    //        if (!unit.gameObject.activeInHierarchy) continue;
+        foreach (Unit unit in units)
+        {
+            if (unit == target)
+                continue;
 
-    //        float dist = Vector3.Distance(unit.transform.position, position);
-    //        if (dist < minDist)
-    //        {
-    //            defender = unit;
-    //            minDist = dist;
-    //        }
-    //    }
+            SupportUnit support = unit as SupportUnit;
 
-    //    defender.movement.MoveTo(position);
-    //}
+            if (support == null)
+                continue;
+
+            Vector3 dir = target.agent.Aggressor.transform.position - targetPosition;
+            float sqrDistance = Vector3.SqrMagnitude(support.transform.position - (targetPosition + dir.normalized * support.defendRange));
+
+            if (lowestSqrDistance > sqrDistance)
+            {
+                lowestSqrDistance = sqrDistance;
+                nearestSupport = support;
+            }
+        }
+
+        nearestSupport?.SetTarget(target);
+    }
 
     public void UpdatePositions()
     {

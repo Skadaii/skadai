@@ -15,7 +15,7 @@ public class Agent : MonoBehaviour, IDamageable
     protected int MaxHP = 100;
     protected bool IsDead = false;
 
-    protected int CurrentHP;
+    public int CurrentHP { get; protected set; } = 100;
 
     protected Vector3 DeltaVel = Vector3.zero;
 
@@ -24,14 +24,14 @@ public class Agent : MonoBehaviour, IDamageable
 
     protected float NextShootDate = 0f;
     
-    public UnityEvent<GameObject> OnHit = new UnityEvent<GameObject>();
+    public UnityEvent OnHit = new UnityEvent();
 
     [SerializeField] private float HPBarHeight = 1.5f;
     [SerializeField] private   GameObject   HPBarPrefab;
     private UI_HealthBar HPBar;
 
     private GameObject ExplodeFX;
-    public  GameObject Assaillant;
+    public  GameObject Aggressor;
 
     Coroutine AttackedStateCoroutine;
 
@@ -40,7 +40,7 @@ public class Agent : MonoBehaviour, IDamageable
         ExplodeFX = Resources.Load("FXs/ParticleExplode") as GameObject;
     }
 
-    private void OnEnable()
+    protected void OnEnable()
     {
         CurrentHP = MaxHP;
         IsDead    = false;
@@ -55,7 +55,7 @@ public class Agent : MonoBehaviour, IDamageable
         }
     }
 
-    private void OnDisable()
+    protected void OnDisable()
     {
         if (HPBar != null) HPBar.Destroy();
 
@@ -68,7 +68,7 @@ public class Agent : MonoBehaviour, IDamageable
 
     public void AddDamage(int amount, GameObject attacker)
     {
-        Assaillant = attacker;
+        Aggressor = attacker;
 
         if (AttackedStateCoroutine != null)
         {
@@ -86,8 +86,8 @@ public class Agent : MonoBehaviour, IDamageable
 
             OnDeath();
         }
-        else
-            OnHit.Invoke(attacker);
+        
+        OnHit.Invoke();
 
         OnHealthChange();
     }
@@ -147,7 +147,7 @@ public class Agent : MonoBehaviour, IDamageable
     {
         yield return new WaitForSeconds(duration);
 
-        Assaillant = null;
+        Aggressor = null;
 
         AttackedStateCoroutine = null;
     }

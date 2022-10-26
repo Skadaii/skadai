@@ -17,6 +17,6 @@ MonoBehaviour:
   circleSpacing: 2.5
   baseSpacing: 2.5
   worldOffset: {x: 0, y: 0, z: 0}
-  localOffset: {x: 0, y: 0, z: 0}
+  localOffset: {x: 0, y: 0, z: -8}
   baseAngleOffset: 0
   lineAngleOffset: 2.5

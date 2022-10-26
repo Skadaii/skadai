@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class UnitLeader : Unit
 {
-    void OnDestroy()
+    protected new void OnEnable()
     {
-        //if (m_Squad && agent) // Only if the leader is virtual
-        //    agent.OnHit.RemoveListener(m_Squad.AskDefenderUnit);
+        base.OnEnable();
+
+        agent?.OnHit.AddListener(CallForCover);
+    }
+
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        agent?.OnHit.RemoveListener(CallForCover);
     }
 
     public override void SetSquad(UnitSquad squad)
@@ -18,26 +26,11 @@ public class UnitLeader : Unit
             base.SetSquad(squad);
             return;
         }
-
-        //if (m_Squad)
-        //    agent.OnHit.RemoveListener(m_Squad.AskDefenderUnit);
-
         base.SetSquad(squad);
-
-        //if (m_Squad)
-        //    agent.OnHit.AddListener(m_Squad.AskDefenderUnit);
     }
 
-    public void NeedCover()
+    public void CallForCover()
     {
-        Vector3 position = agent.transform.position + Vector3.Normalize(agent.Assaillant.transform.position - transform.position) * m_Squad.defendRange;
-
-        //m_Squad.OnLeaderNeedCover(position);
-    }
-
-    public void NeedHeal()
-    {
-        Debug.Log("NEED HEAL MF !");
-        //m_Squad.OnLeaderNeedHeal();
+        m_Squad.AssignSupportTo(this);
     }
 }

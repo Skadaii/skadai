@@ -49,12 +49,17 @@ public class UnitAgent : AIAgent
         Trigger.radius = Mathf.Max(HearingRadius, SightAngle, PrivacyRadius);
 
     }
-    private void Start()
+
+    protected new void OnEnable()
     {
+        base.OnEnable();
+        OnHit.AddListener(SetTargetToAgressor);
     }
 
-    private void OnDrawGizmos()
+    protected new void OnDisable()
     {
+        base.OnDisable();
+        OnHit.RemoveListener(SetTargetToAgressor);
     }
 
     #endregion
@@ -105,10 +110,13 @@ public class UnitAgent : AIAgent
     #endregion
 
     #region ActionMethods
-    public void ShootToPosition(Vector3 pos)
+
+    private void SetTargetToAgressor()
     {
-        transform.LookAt(pos + Vector3.up * transform.position.y);
-        base.ShootForward();
+        if(Target == null)
+        {
+            Target = Aggressor;
+        }
     }
 
     #endregion

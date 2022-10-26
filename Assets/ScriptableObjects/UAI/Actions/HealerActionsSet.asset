@@ -26,7 +26,7 @@ MonoBehaviour:
       Component: {fileID: 0}
       Show: 0
       ComponentName: HealerUnit
-      MethodName: LeaderHealNeedFactor
+      MethodName: TargetHealNeedFactor
       AnimationCurve:
         serializedVersion: 2
         m_Curve:

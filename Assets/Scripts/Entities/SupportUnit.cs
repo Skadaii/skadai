@@ -6,15 +6,11 @@ using System;
 [RequireComponent(typeof(Movement))]
 public class SupportUnit : Unit
 {
-    Unit target;
+    public Unit target { get; private set; }
 
-    [SerializeField] private float defendRange = 2f;
+    public float defendRange = 2f;
+    private GameObject targetAgressor;
 
-    private void Start()
-    {
-        //DevTest
-        SetTarget(m_Squad.leader);
-    }
 
     private void OnDestroy()
     {
@@ -23,27 +19,35 @@ public class SupportUnit : Unit
 
     public void SetTarget(Unit newTarget)
     {
-        if (target != null && newTarget == null)
-        {
-            target.isBeingHealed = false;
+        //  Unregister the assigned healer from the old target
+        if (target != null) target.assignedSupport = null;
 
-            return;
-        }
+        //  If the new target already has an assigned healer
+        if (newTarget?.assignedSupport != null) return;
 
-        if (newTarget == null || !newTarget.isBeingHealed)
+        target = newTarget;
+
+        //  If the new target is valid register 'this' as the assigned healer
+        if (target)
         {
-            target = newTarget;
+            target.assignedSupport = this;
+            targetAgressor = target.agent.Aggressor;
         }
     }
 
     public float TargetCoverNeedFactor()
     {
-        return target != null ? Convert.ToSingle(target.agent.Assaillant != null) : 0f;
+        if (target != null)
+        {
+            return Convert.ToSingle(target.agent.Aggressor != null || agent.Aggressor != null);
+        }
+
+        return 0f;
     }
 
     public void Cover()
     {
-        Vector3 dir = target.agent.Assaillant.transform.position - target.transform.position;
+        Vector3 dir = targetAgressor.transform.position - target.transform.position;
         movement.MoveTo(target.transform.position + dir.normalized * defendRange);
     }
 

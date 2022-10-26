@@ -12,6 +12,8 @@ public class AIAgent : Agent, IDamageable
 
     protected GameObject Target = null;
 
+    [SerializeField] private float rotationSpeed = 10f;
+
     #region MonoBehaviour
 
     protected new void Awake()
@@ -64,7 +66,7 @@ public class AIAgent : Agent, IDamageable
 
             desiredForward = Vector3.Normalize(new Vector3(desiredForward.x, 0f, desiredForward.z));
 
-            transform.forward = Vector3.Lerp(transform.forward, desiredForward, 0.1f);
+            transform.forward = Vector3.Slerp(transform.forward, desiredForward, Time.deltaTime * rotationSpeed);
 
             //  Can shoot ?
             if (Vector3.SqrMagnitude(transform.forward - desiredForward) < 0.1f && Time.time >= NextShootDate)
@@ -73,10 +75,6 @@ public class AIAgent : Agent, IDamageable
                 ShootForward();
             }
         }
-    }
-
-    private void OnDrawGizmos()
-    {
     }
 
     #endregion

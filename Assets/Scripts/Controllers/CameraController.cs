@@ -4,11 +4,13 @@ using System.Collections;
 public class CameraController : MonoBehaviour
 {
 	public Transform Target = null;
-	public float Smoothing = 5f;
+	public float SmoothingTime = 5f;
 
     [SerializeField]
 	private Vector3 offset = new Vector3(0f, 13f, -7f);
-	void Start ()
+
+	private Vector3 smoothVel = Vector3.zero;
+    void Start ()
 	{
         if (Target == null)
             return;
@@ -20,6 +22,7 @@ public class CameraController : MonoBehaviour
         if (Target == null)
             return;
 		Vector3 targetCamPos = Target.position + offset;
-        transform.position = Vector3.Lerp(transform.position, targetCamPos, Smoothing * Time.deltaTime);
+
+        transform.position = Vector3.SmoothDamp(transform.position, targetCamPos, ref smoothVel, SmoothingTime);
     }
 }

@@ -94,6 +94,6 @@ public class PlayerAgent : Agent
 
     public float IsAttacked()
     {
-        return Convert.ToSingle(Assaillant != null);
+        return Convert.ToSingle(Aggressor != null);
     }
 }

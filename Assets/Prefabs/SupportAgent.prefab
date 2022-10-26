@@ -147,7 +147,8 @@ MonoBehaviour:
   HPBarHeight: 1.5
   HPBarPrefab: {fileID: 1553091337664375409, guid: dfdc7fa0997f2554b808ddef72b14e55,
     type: 3}
-  Assaillant: {fileID: 0}
+  Aggressor: {fileID: 0}
+  rotationSpeed: 7.5
   HearingRadius: 10
   SightAngle: 0.5
   PrivacyRadius: 2
@@ -215,7 +216,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 0}
   agent: {fileID: 0}
-  isBeingHealed: 0
+  assignedHealer: {fileID: 0}
+  assignedSupport: {fileID: 0}
   defendRange: 2
 --- !u!135 &614356075419529752
 SphereCollider:

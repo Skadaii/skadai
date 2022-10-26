@@ -9,13 +9,7 @@ public class HealerUnit : Unit
     [SerializeField] private int   healPower = 5;
     [SerializeField] private float healingRadius = 1.25f;
 
-    Unit target;
-
-    private void Start()
-    {
-        //DevTest
-        SetTarget(m_Squad.leader);
-    }
+    public Unit target { get; private set; }
 
     private void OnDestroy()
     {
@@ -24,23 +18,21 @@ public class HealerUnit : Unit
 
     public void SetTarget(Unit newTarget)
     {
-        if (target != null && newTarget == null)
-        {
-            target.isBeingHealed = false;
+        //  Unregister the assigned healer from the old target
+        if(target != null) target.assignedHealer = null;
 
-            return;
-        }
+        //  If the new target already has an assigned healer
+        if (newTarget?.assignedHealer != null) return;
 
-        if (newTarget == null || !newTarget.isBeingHealed)
-        {
-            target = newTarget;
-        }
+        target = newTarget;
+
+        //  If the new target is valid register 'this' as the assigned healer
+        if (target) target.assignedHealer = this;
     }
 
-    public float LeaderHealNeedFactor()
+    public float TargetHealNeedFactor()
     {
         return target != null ? Mathf.Max(1f - target.agent.GetLifePercent(), 0f) : 0f;
-
     }
 
     public void Heal()
@@ -51,12 +43,15 @@ public class HealerUnit : Unit
 
         if (Vector3.SqrMagnitude(position - transform.position) <= healingRadius * healingRadius)
         {
-            target.isBeingHealed = !target.agent.AddHealth(healPower);
+            if(target.agent.AddHealth(healPower))
+            {
+                SetTarget(null);
+            }
         }
     }
 
     public override bool HasDuty()
     {
-        return LeaderHealNeedFactor() > 0f;
+        return TargetHealNeedFactor() > 0f;
     }
 }
