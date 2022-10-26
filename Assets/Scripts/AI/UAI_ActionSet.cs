@@ -5,9 +5,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "UAI_Actions", menuName = "ScriptableObjects/UAI_Actions", order = 1)]
 public class UAI_ActionSet : ScriptableObject
 {
-    public bool Show = false;
+    public string ActionSetName;
 
-    public List<UAI_Action> actions = new List<UAI_Action>();
+    public bool Show = false;
+    public bool ShowActions = false;
+
+    public bool ExecuteInUpdate = false;
+
+    public List<UAI_Action> Actions = new List<UAI_Action>();
     public UAI_Blackboard Blackboard;
 
     public void Setup(UtilityAI utilityAI)
@@ -15,7 +20,7 @@ public class UAI_ActionSet : ScriptableObject
         if (Blackboard != null)
             Blackboard = Instantiate(Blackboard);
 
-        foreach(UAI_Action action in actions)
+        foreach(UAI_Action action in Actions)
         {
             foreach (UAI_Method method in action.methods)
                 method.Setup(utilityAI);

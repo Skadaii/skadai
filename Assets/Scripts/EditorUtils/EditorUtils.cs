@@ -5,9 +5,9 @@ using System;
 
 public class EditorUtils
 {
-    public static VisualElement CreateLabel(float borderSize, float borderRadius, Color borderColor, Color backgroundColor, FlexDirection flexDirection)
+    public static VisualElement CreateLabel(float borderSize, float borderRadius, Color borderColor, Color backgroundColor, FlexDirection flexDirection, string text = "")
     {
-        Label label = new Label();
+        Label label = new Label(text);
 
         label.style.borderBottomWidth = borderSize;
         label.style.borderTopWidth = borderSize;

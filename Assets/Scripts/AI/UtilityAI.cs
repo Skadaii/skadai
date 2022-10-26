@@ -6,39 +6,70 @@ using UnityEngine;
 public class UtilityAI : MonoBehaviour
 {
     public string ActionSetName = "NewActionSet";
-    public UAI_ActionSet ActionSet;
 
-    struct BestValue
-    {
-        public float heuristic;
-        public UAI_Action action;
-    }
+    public bool Show = false;
+    public List<UAI_ActionSet> ActionSetList;
 
     private void Start()
     {
-        ActionSet = Instantiate(ActionSet);
+        List<UAI_ActionSet> actionSetListInstantiate = new List<UAI_ActionSet>();
 
-        if (ActionSet != null)
-            ActionSet.Setup(this);
+        foreach (UAI_ActionSet actionSet in ActionSetList)
+        {
+            UAI_ActionSet actionSetInstantiate = Instantiate(actionSet);
+            actionSetListInstantiate.Add(actionSetInstantiate);
+
+            if (actionSetInstantiate != null)
+                actionSetInstantiate.Setup(this);
+        }
+
+        ActionSetList = actionSetListInstantiate;
     }
 
     public void Update()
     {
-        BestValue bestValue;
-        bestValue.heuristic = 0f;
-        bestValue.action = null;
+        foreach (UAI_ActionSet actionSet in ActionSetList)
+        {
+            if (!actionSet.ExecuteInUpdate)
+                continue;
 
-        foreach (UAI_Action action in ActionSet.actions)
+            UAI_Action action = GetBestActionFromActionSet(actionSet);
+
+            if (action != null)
+                action.InvokeMethods();
+        }
+    }
+
+    private UAI_Action GetBestActionFromActionSet(UAI_ActionSet actionSet)
+    {
+        float heuristic = 0f;
+        UAI_Action bestAction = null;
+
+        foreach (UAI_Action action in actionSet.Actions)
         {
             float newHeuristic = action.consideration.Evaluate();
-            if (newHeuristic > bestValue.heuristic)
+            if (newHeuristic > heuristic)
             {
-                bestValue.heuristic = newHeuristic;
-                bestValue.action = action;
+                heuristic = newHeuristic;
+                bestAction = action;
             }
         }
 
-        if (bestValue.action != null)
-            bestValue.action.InvokeMethods();
+        return bestAction;
+    }
+
+    public bool GetBestActionFromActionSet(string actionSetName, out UAI_Action action)
+    {
+        foreach (UAI_ActionSet actionSet in ActionSetList)
+        {
+            if (actionSet.ActionSetName == actionSetName)
+            {
+                action = GetBestActionFromActionSet(actionSet);
+                return true;
+            }
+        }
+
+        action = null;
+        return false;
     }
 }

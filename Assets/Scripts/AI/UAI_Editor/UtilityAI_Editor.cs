@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Reflection;
-using System;
 using System.Linq;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
@@ -14,9 +12,6 @@ public class UtilityAI_Editor : Editor
     private VisualElement root;
 
     private UtilityAI Target => target as UtilityAI;
-
-    SerializedProperty ActionSetProperty;
-    PropertyField ActionSetPropertyField;
 
     class SerializedShow
     {
@@ -60,12 +55,28 @@ public class UtilityAI_Editor : Editor
         public TextElement TextElement;
     }
 
-    private SerializedShow SerializedActionsShow;
-    private Button AddActionButton;
-    private List<SerializedAction> SerializedActions = new List<SerializedAction>();
+    class SerializedActionSet : SerializedShow
+    {
+        public SerializedProperty NameProperty;
+        public Button RemoveButton;
 
-    private SerializedProperty BlackboardProperty;
-    private PropertyField BlackboardPropertyField;
+
+        public SerializedShow SerializedActionsShow;
+        public Button AddActionButton;
+        public List<SerializedAction> SerializedActions = new List<SerializedAction>();
+
+        public SerializedProperty BlackboardProperty;
+        public PropertyField BlackboardPropertyField;
+
+        public SerializedProperty ActionSetProperty;
+        public PropertyField ActionSetPropertyField;
+
+        public SerializedProperty UtilityExecuteInUpdateProperty;
+        public PropertyField UtilityExecuteInUpdateField;
+    }
+
+    private List<SerializedActionSet> SerializedActionSetList = new List<SerializedActionSet>();
+    SerializedProperty ActionSetListProperty;
 
     //Action Set Creation
     private Button CreateActionSetButton;
@@ -79,88 +90,118 @@ public class UtilityAI_Editor : Editor
     public override VisualElement CreateInspectorGUI()
     {
         ComputeComponentsAndMethods();
-
+    
         FindProperties();
         InitializeEditor();
         Compose();
-
+    
         return root;
     }
 
     private void FindProperties()
     {
-        ActionSetProperty = serializedObject.FindProperty(nameof(UtilityAI.ActionSet));
-
-        if (Target.ActionSet != null)
-            FindActionSetProperties();
-
         ActionSetNameProperty = serializedObject.FindProperty(nameof(UtilityAI.ActionSetName));
+        ActionSetListProperty = serializedObject.FindProperty(nameof(UtilityAI.ActionSetList));
+
+        FindActionSetListProperties();
     }
 
-    private void FindActionSetProperties()
+    private void FindActionSetListProperties()
     {
-        SerializedActions.Clear();
+        SerializedActionSetList.Clear();
 
-        if (Target.ActionSet == null)
+        if (Target.ActionSetList != null && Target.ActionSetList.Count > 0)
+        {
+            for (int index = 0; index < ActionSetListProperty.arraySize; index++)
+            {
+                SerializedActionSet serializedActionSet = new SerializedActionSet();
+                serializedActionSet.ActionSetProperty = ActionSetListProperty.GetArrayElementAtIndex(index);
+
+                SerializedActionSetList.Add(serializedActionSet);
+
+                FindActionSetProperties(serializedActionSet);
+            }
+        }
+    }
+
+    private void FindActionSetProperties(SerializedActionSet serializedActionSet)
+    {
+        serializedActionSet.SerializedActions.Clear();
+
+        if (Target.ActionSetList == null)
             return;
 
-        SerializedObject ActionSetSerializedObject = new SerializedObject(ActionSetProperty.objectReferenceValue);
+        SerializedObject ActionSetSerializedObject = new SerializedObject(serializedActionSet.ActionSetProperty.objectReferenceValue);
 
-        BlackboardProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.Blackboard));
+        serializedActionSet.NameProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.ActionSetName));
+        serializedActionSet.ShowProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.Show));
 
-        SerializedActionsShow = new SerializedShow();
-        SerializedActionsShow.ShowProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.Show));
+        serializedActionSet.UtilityExecuteInUpdateProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.ExecuteInUpdate));
+        serializedActionSet.BlackboardProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.Blackboard));
 
-        SerializedProperty actionListProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.actions));
+        serializedActionSet.SerializedActionsShow = new SerializedShow();
+        serializedActionSet.SerializedActionsShow.ShowProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.ShowActions));
 
-        for (int index = 0; index < Target.ActionSet.actions.Count; index++)
+        SerializedProperty actionListProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.Actions));
+
+        for (int index = 0; index < actionListProperty.arraySize; index++)
         {
             SerializedAction serializedAction = new SerializedAction();
             SerializedProperty actionProperty = actionListProperty.GetArrayElementAtIndex(index);
 
-            serializedAction.ShowProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.Show));
-            serializedAction.ActionNameProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.actionName));
+            FindActionProperties(serializedAction, actionProperty);
 
-            serializedAction.SerializedMethods = new SerializedMethods();
-            serializedAction.SerializedMethods.ShowProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.ShowMethods));
-            serializedAction.SerializedMethods.SerializedListMethods = new List<SerializedMethod>();
-
-            SerializedProperty methodListProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.methods));
-            serializedAction.SerializedMethods.MethodListProperty = methodListProperty;
-
-            for (int methodIndex = 0; methodIndex < Target.ActionSet.actions[index].methods.Count; methodIndex++)
-            {
-                SerializedProperty methodProperty = methodListProperty.GetArrayElementAtIndex(methodIndex);
-
-                SerializedMethod serializedMethod = new SerializedMethod();
-                serializedMethod.ShowProperty = methodProperty.FindPropertyRelative(nameof(UAI_Method.Show));
-                serializedMethod.MethodStringProperty = methodProperty.FindPropertyRelative(nameof(UAI_Method.MethodName));
-                serializedMethod.ComponentStringProperty = methodProperty.FindPropertyRelative(nameof(UAI_Method.ComponentName));
-
-                serializedAction.SerializedMethods.SerializedListMethods.Add(serializedMethod);
-            }
-
-            SerializedProperty considerationProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.consideration));
-
-            serializedAction.SerializedConsideration = new SerializedConsideration();
-
-            serializedAction.SerializedConsideration.ShowProperty = considerationProperty.FindPropertyRelative(nameof(UAI_Consideration.Show));
-            serializedAction.SerializedConsideration.MethodStringProperty = considerationProperty.FindPropertyRelative(nameof(UAI_Consideration.MethodName));
-            serializedAction.SerializedConsideration.ComponentStringProperty = considerationProperty.FindPropertyRelative(nameof(UAI_Consideration.ComponentName));
-            serializedAction.SerializedConsideration.AnimationCurveProperty = considerationProperty.FindPropertyRelative(nameof(UAI_Consideration.AnimationCurve));
-
-            SerializedActions.Add(serializedAction);
+            serializedActionSet.SerializedActions.Add(serializedAction);
         }
 
     }
 
-    private void InitializeEditor()
+    private void FindActionProperties(SerializedAction serializedAction, SerializedProperty actionProperty)
+    {
+        serializedAction.ShowProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.Show));
+        serializedAction.ActionNameProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.actionName));
+
+        serializedAction.SerializedMethods = new SerializedMethods();
+        serializedAction.SerializedMethods.ShowProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.ShowMethods));
+        serializedAction.SerializedMethods.SerializedListMethods = new List<SerializedMethod>();
+
+        SerializedProperty methodListProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.methods));
+        serializedAction.SerializedMethods.MethodListProperty = methodListProperty;
+
+        for (int methodIndex = 0; methodIndex < methodListProperty.arraySize; methodIndex++)
+        {
+            SerializedProperty methodProperty = methodListProperty.GetArrayElementAtIndex(methodIndex);
+            SerializedMethod serializedMethod = new SerializedMethod();
+
+            FindMethodProperties(serializedMethod, methodProperty);
+
+            serializedAction.SerializedMethods.SerializedListMethods.Add(serializedMethod);
+        }
+
+        SerializedProperty considerationProperty = actionProperty.FindPropertyRelative(nameof(UAI_Action.consideration));
+
+        serializedAction.SerializedConsideration = new SerializedConsideration();
+
+        serializedAction.SerializedConsideration.ShowProperty = considerationProperty.FindPropertyRelative(nameof(UAI_Consideration.Show));
+        serializedAction.SerializedConsideration.MethodStringProperty = considerationProperty.FindPropertyRelative(nameof(UAI_Consideration.MethodName));
+        serializedAction.SerializedConsideration.ComponentStringProperty = considerationProperty.FindPropertyRelative(nameof(UAI_Consideration.ComponentName));
+        serializedAction.SerializedConsideration.AnimationCurveProperty = considerationProperty.FindPropertyRelative(nameof(UAI_Consideration.AnimationCurve));
+    }
+
+    private void FindMethodProperties(SerializedMethod serializedMethod, SerializedProperty methodProperty)
+    {
+        serializedMethod.ShowProperty = methodProperty.FindPropertyRelative(nameof(UAI_Method.Show));
+        serializedMethod.MethodStringProperty = methodProperty.FindPropertyRelative(nameof(UAI_Method.MethodName));
+        serializedMethod.ComponentStringProperty = methodProperty.FindPropertyRelative(nameof(UAI_Method.ComponentName));
+    }
+
+        private void InitializeEditor()
     {
         root = new VisualElement();
 
         #region Create Action Set
-        CreateActionSetButton = new Button(CreateActionSet);
-        CreateActionSetButton.text = "Create Action Set";
+        CreateActionSetButton = new Button(AddOrCreateActionSet);
+        CreateActionSetButton.text = "Add Or Create Action Set";
         CreateActionSetButton.style.width = new Length(69, LengthUnit.Percent);
 
         ActionSetNameTextField = new TextField();
@@ -168,33 +209,58 @@ public class UtilityAI_Editor : Editor
         ActionSetNameTextField.style.width = new Length(30, LengthUnit.Percent);
         #endregion
 
-        ActionSetPropertyField = new PropertyField(ActionSetProperty);
-        ActionSetPropertyField.TrackPropertyValue(ActionSetProperty, ActionSetPropertyChanged);
-
-        if (Target.ActionSet != null)
-            InitalizeActionSetEditor();
+        InitalizeActionSetListEditor();
     }
 
-    private void InitalizeActionSetEditor()
+    private void InitalizeActionSetListEditor()
     {
-        if (Target.ActionSet == null)
-            return;
+        if (Target.ActionSetList != null && Target.ActionSetList.Count > 0)
+        {
+            for (int index = 0; index < ActionSetListProperty.arraySize; index++)
+            {
+                InitalizeActionSetEditor(SerializedActionSetList[index]);
+            }
+        }
+    }
 
-        BlackboardPropertyField = new PropertyField();
-        BlackboardPropertyField.BindProperty(BlackboardProperty);
+    private void InitalizeActionSetEditor(SerializedActionSet serializedActionSet)
+    {
+        string name = serializedActionSet.NameProperty.stringValue;
 
-        SerializedActionsShow.ShowFoldout = EditorUtils.CreateFoldout("Actions", 15, Color.white, FlexDirection.Column);
-        SerializedActionsShow.ShowFoldout.BindProperty(SerializedActionsShow.ShowProperty);
+        serializedActionSet.ShowFoldout = EditorUtils.CreateFoldout(name, 15, Color.white, FlexDirection.Column);
+        serializedActionSet.ShowFoldout.BindProperty(serializedActionSet.ShowProperty);
 
-        AddActionButton =
-                EditorUtils.CreateFoldoutButton("Add",
-                delegate { AddAction(); },
+        serializedActionSet.RemoveButton = 
+            EditorUtils.CreateFoldoutButton("Remove",
+                delegate { RemoveActionSet(serializedActionSet); },
                 new Length(25, LengthUnit.Percent),
                 Position.Absolute,
                 Align.FlexEnd,
                 1);
 
-        foreach (SerializedAction serializedAction in SerializedActions)
+        serializedActionSet.ActionSetPropertyField = new PropertyField();
+        serializedActionSet.ActionSetPropertyField.BindProperty(serializedActionSet.ActionSetProperty);
+        serializedActionSet.ActionSetPropertyField.SetEnabled(false);
+        serializedActionSet.ActionSetPropertyField.label = "Action Set";
+
+        serializedActionSet.BlackboardPropertyField = new PropertyField();
+        serializedActionSet.BlackboardPropertyField.BindProperty(serializedActionSet.BlackboardProperty);
+
+        serializedActionSet.UtilityExecuteInUpdateField = new PropertyField();
+        serializedActionSet.UtilityExecuteInUpdateField.BindProperty(serializedActionSet.UtilityExecuteInUpdateProperty);
+
+        serializedActionSet.SerializedActionsShow.ShowFoldout = EditorUtils.CreateFoldout("Actions", 15, Color.white, FlexDirection.Column);
+        serializedActionSet.SerializedActionsShow.ShowFoldout.BindProperty(serializedActionSet.SerializedActionsShow.ShowProperty);
+
+        serializedActionSet.AddActionButton =
+                EditorUtils.CreateFoldoutButton("Add",
+                delegate { AddAction(serializedActionSet); },
+                new Length(25, LengthUnit.Percent),
+                Position.Absolute,
+                Align.FlexEnd,
+                1);
+
+        foreach (SerializedAction serializedAction in serializedActionSet.SerializedActions)
         {
             serializedAction.ShowFoldout = EditorUtils.CreateFoldout(serializedAction.ActionNameProperty.stringValue, 15, Color.white, FlexDirection.Column);
             serializedAction.ShowFoldout.BindProperty(serializedAction.ShowProperty);
@@ -209,7 +275,7 @@ public class UtilityAI_Editor : Editor
 
             serializedAction.RemoveButton = 
                 EditorUtils.CreateFoldoutButton("Remove", 
-                delegate { RemoveAction(serializedAction); }, 
+                delegate { RemoveAction(serializedActionSet, serializedAction); }, 
                 new Length(25, LengthUnit.Percent), 
                 Position.Absolute, 
                 Align.FlexEnd, 
@@ -299,38 +365,65 @@ public class UtilityAI_Editor : Editor
     {
         root.Clear();
 
-        root.Add(ActionSetPropertyField);
-
         #region Create Action Set
-        if (Target.ActionSet == null)
-        {
-            VisualElement label = EditorUtils.CreateLabel(1, 5, Color.gray, new Color(0,0,0,0), FlexDirection.Row);
+        VisualElement label = EditorUtils.CreateLabel(1, 5, Color.gray, new Color(0, 0, 0, 0), FlexDirection.Row);
 
-            label.Add(ActionSetNameTextField);
-            label.Add(CreateActionSetButton);
+        label.Add(ActionSetNameTextField);
+        label.Add(CreateActionSetButton);
 
-            root.Add(label);
-
-            return;
-        }
+        root.Add(label);
         #endregion
 
-        root.Add(BlackboardPropertyField);
+        VisualElement actionSetListLabel = EditorUtils.CreateLabel(1, 5, Color.blue, new Color(0, 0, 0, 0), FlexDirection.Column);
+        VisualElement actionSetListLabelText = EditorUtils.CreateLabel(0, 0, Color.white, new Color(0, 0, 0, 0), FlexDirection.Column, "Actions Sets");
+
+        actionSetListLabelText.style.unityTextAlign = TextAnchor.UpperCenter;
+        actionSetListLabelText.style.color = Color.white;
+
+        root.Add(EditorUtils.CreateSpace(new Vector2(0, 20)));
+        root.Add(actionSetListLabel);
+
+        actionSetListLabel.Add(actionSetListLabelText);
+        actionSetListLabel.Add(EditorUtils.CreateSpace(new Vector2(0, 20)));
+
+        foreach (SerializedActionSet serializedActionSet in SerializedActionSetList)
+        {
+            VisualElement actionSetLabel = EditorUtils.CreateLabel(1, 5, Color.grey, new Color(0, 0, 0, 0), FlexDirection.Column);
+            actionSetLabel.style.alignSelf = Align.Stretch;
+            actionSetLabel.style.marginTop = 2.5f;
+            actionSetLabel.style.marginBottom = 2.5f;
+
+            actionSetListLabel.Add(actionSetLabel);
+            actionSetLabel.Add(serializedActionSet.ShowFoldout);
+            actionSetLabel.Add(serializedActionSet.RemoveButton);
+
+            ComposeActionSet(serializedActionSet);
+
+            serializedActionSet.ShowFoldout.Add(EditorUtils.CreateSpace(new Vector2(0, 5)));
+        }
+
+    }
+
+    private void ComposeActionSet(SerializedActionSet serializedActionSet)
+    {
+        serializedActionSet.ShowFoldout.Add(serializedActionSet.ActionSetPropertyField);
+        serializedActionSet.ShowFoldout.Add(serializedActionSet.BlackboardPropertyField);
+        serializedActionSet.ShowFoldout.Add(serializedActionSet.UtilityExecuteInUpdateField);
 
         VisualElement actionsLabel = EditorUtils.CreateLabel(1, 5, Color.gray, new Color(0, 0, 0, 0), FlexDirection.Column);
 
-        root.Add(actionsLabel);
-        actionsLabel.Add(SerializedActionsShow.ShowFoldout);
-        actionsLabel.Add(AddActionButton);
+        serializedActionSet.ShowFoldout.Add(actionsLabel);
+        actionsLabel.Add(serializedActionSet.SerializedActionsShow.ShowFoldout);
+        actionsLabel.Add(serializedActionSet.AddActionButton);
 
-        SerializedActionsShow.ShowFoldout.Add(EditorUtils.CreateSpace(new Vector2(0, 5)));
+        serializedActionSet.SerializedActionsShow.ShowFoldout.Add(EditorUtils.CreateSpace(new Vector2(0, 5)));
 
-        foreach (SerializedAction serializedAction in SerializedActions)
+        foreach (SerializedAction serializedAction in serializedActionSet.SerializedActions)
         {
             VisualElement actionLabel = EditorUtils.CreateLabel(1, 5, Color.gray, new Color(0.3f,0.3f,0.3f), FlexDirection.Column);
             actionLabel.style.marginBottom = 5;
 
-            SerializedActionsShow.ShowFoldout.Add(actionLabel);
+            serializedActionSet.SerializedActionsShow.ShowFoldout.Add(actionLabel);
 
             actionLabel.Add(serializedAction.ShowFoldout);
             actionLabel.Add(serializedAction.RemoveButton);
@@ -387,29 +480,36 @@ public class UtilityAI_Editor : Editor
         }
     }
 
-    private void ActionSetPropertyChanged(SerializedProperty property)
+    private void RemoveAction(SerializedActionSet serializedActionSet, SerializedAction serializedAction)
     {
-        FindProperties();
-        InitalizeActionSetEditor();
+        int actionSetIndex = SerializedActionSetList.IndexOf(serializedActionSet);
+        int actionIndex = serializedActionSet.SerializedActions.IndexOf(serializedAction);
+
+        Target.ActionSetList[actionSetIndex].Actions.RemoveAt(actionIndex);
+        SerializedActionSetList[actionSetIndex].SerializedActions.RemoveAt(actionIndex);
+
+        InitalizeActionSetListEditor();
         Compose();
     }
 
-    private void RemoveAction(SerializedAction serializedAction)
+    private void AddAction(SerializedActionSet serializedActionSet)
     {
-        int index = SerializedActions.IndexOf(serializedAction);
-        Target.ActionSet.actions.RemoveAt(index);
+        int index = SerializedActionSetList.IndexOf(serializedActionSet);
+        Target.ActionSetList[index].Actions.Add(new UAI_Action());
 
-        FindActionSetProperties();
-        InitalizeActionSetEditor();
-        Compose();
-    }
+        serializedActionSet.ActionSetProperty.serializedObject.Update();
 
-    private void AddAction()
-    {
-        Target.ActionSet.actions.Add(new UAI_Action());
+        SerializedAction serializedAction = new SerializedAction();
 
-        FindActionSetProperties();
-        InitalizeActionSetEditor();
+        SerializedObject ActionSetSerializedObject = new SerializedObject(serializedActionSet.ActionSetProperty.objectReferenceValue);
+        SerializedProperty actionListProperty = ActionSetSerializedObject.FindProperty(nameof(UAI_ActionSet.Actions));
+        SerializedProperty actionProperty = actionListProperty.GetArrayElementAtIndex(Target.ActionSetList[index].Actions.Count - 1);
+
+        FindActionProperties(serializedAction, actionProperty);
+        
+        serializedActionSet.SerializedActions.Add(serializedAction);
+
+        InitalizeActionSetListEditor();
         Compose();
     }
 
@@ -421,8 +521,14 @@ public class UtilityAI_Editor : Editor
         serializedMethods.MethodListProperty.InsertArrayElementAtIndex(index);
         serializedMethods.MethodListProperty.serializedObject.ApplyModifiedProperties();
 
-        FindActionSetProperties();
-        InitalizeActionSetEditor();
+        SerializedProperty methodProperty = serializedMethods.MethodListProperty.GetArrayElementAtIndex(index);
+        SerializedMethod serializedMethod = new SerializedMethod();
+
+        FindMethodProperties(serializedMethod, methodProperty);
+
+        serializedMethods.SerializedListMethods.Add(serializedMethod);
+
+        InitalizeActionSetListEditor();
         Compose();
     }
 
@@ -433,8 +539,9 @@ public class UtilityAI_Editor : Editor
 
         serializedMethods.MethodListProperty.serializedObject.ApplyModifiedProperties();
 
-        FindActionSetProperties();
-        InitalizeActionSetEditor();
+        serializedMethods.SerializedListMethods.RemoveAt(index);
+
+        InitalizeActionSetListEditor();
         Compose();
     }
 
@@ -459,6 +566,7 @@ public class UtilityAI_Editor : Editor
         Component[] components = Target.GetComponents(typeof(Component));
 
         ComponentsName.Clear();
+        MethodsName.Clear();
 
         if (components.Length != 0)
         {
@@ -479,20 +587,58 @@ public class UtilityAI_Editor : Editor
         }
     }
 
-    private void CreateActionSet()
+    private void AddOrCreateActionSet()
     {
-        UAI_ActionSet asset = ScriptableObject.CreateInstance<UAI_ActionSet>();
+        string assetPath = "Assets/ScriptableObjects/UAI/Actions/" + Target.ActionSetName + ".asset";
 
-        if (!AssetDatabase.IsValidFolder("Assets/ScriptableObjects"))
+        UAI_ActionSet asset;
+
+        asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(UAI_ActionSet)) as UAI_ActionSet;
+
+        if (!asset)
         {
-            AssetDatabase.CreateFolder("Assets", "ScriptableObjects");
-            AssetDatabase.CreateFolder("Assets/ScriptableObjects", "UAI");
-            AssetDatabase.CreateFolder("Assets/ScriptableObjects/UAI", "Actions");
+            asset = ScriptableObject.CreateInstance<UAI_ActionSet>();
+
+            if (!AssetDatabase.IsValidFolder("Assets/ScriptableObjects"))
+            {
+                AssetDatabase.CreateFolder("Assets", "ScriptableObjects");
+                AssetDatabase.CreateFolder("Assets/ScriptableObjects", "UAI");
+                AssetDatabase.CreateFolder("Assets/ScriptableObjects/UAI", "Actions");
+            }
+
+            AssetDatabase.CreateAsset(asset, assetPath);
+            AssetDatabase.SaveAssets();
         }
 
-        AssetDatabase.CreateAsset(asset, "Assets/ScriptableObjects/UAI/Actions/" + Target.ActionSetName + ".asset");
-        AssetDatabase.SaveAssets();
+        asset.ActionSetName = Target.ActionSetName;
+        Target.ActionSetList.Add(asset);
 
-        Target.ActionSet = asset;
+        ActionSetListProperty.serializedObject.Update();
+
+        FindActionSetListProperties();
+        InitalizeActionSetListEditor();
+        Compose();
+    }
+
+    private void RemoveActionSet(SerializedActionSet serializedActionSet)
+    {
+        int index = SerializedActionSetList.IndexOf(serializedActionSet);
+        ActionSetListProperty.DeleteArrayElementAtIndex(index);
+
+        ActionSetListProperty.serializedObject.ApplyModifiedProperties();
+
+        FindActionSetListProperties();
+        InitalizeActionSetListEditor();
+        Compose();
+    }
+
+    private void ActionSetListPropertyChanged(SerializedProperty serializedProperty)
+    {
+        if (Target.ActionSetList.Count != SerializedActionSetList.Count)
+        {
+            FindActionSetListProperties();
+            InitalizeActionSetListEditor();
+            Compose();
+        }
     }
 }
