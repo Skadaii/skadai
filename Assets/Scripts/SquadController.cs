@@ -6,12 +6,17 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(UnitSquad))]
 public class SquadController : MonoBehaviour
 {
-    [SerializeField] private GameObject healerUnitPrefab = null;
-    [SerializeField] private GameObject supportUnitPrefab = null;
-    [SerializeField] private int healerUnitCount = 3;
-    [SerializeField] private int supportUnitCount = 3;
+    [System.Serializable]
+    private class UnitType
+    {
+        public GameObject prefab;
+        public int count;
+    }
+
+    [SerializeField] private List<UnitType> unitTypes = new List<UnitType>();
 
     private UnitSquad m_Squad = null;
+    private int m_unitCount = 0;
 
     private void Awake()
     {
@@ -20,8 +25,9 @@ public class SquadController : MonoBehaviour
 
     private void Start()
     {
-        if (healerUnitPrefab && supportUnitPrefab)
-            InitializeUnits();
+        unitTypes.ForEach(type => { m_unitCount += type.count; });
+        
+        if (m_unitCount != 0) InitializeUnits();
     }
 
     private void InitializeUnits()
@@ -29,30 +35,31 @@ public class SquadController : MonoBehaviour
         List<Unit> unitList = new List<Unit>();
         Transform startTransform = (m_Squad.leader ?? this as Component).transform;
 
-        int unitCount = healerUnitCount + supportUnitCount;
-        float spawnAngle = Mathf.PI * 2.0f / unitCount;
-        for (int i = 0; i < unitCount; i++)
+        float spawnAngle = Mathf.PI * 2.0f / m_unitCount;
+        int   currentCount = 0;
+
+        foreach(UnitType type in unitTypes)
         {
-            Vector3 spawnPos;
-
-            if (m_Squad.formation)
+            for (int i = 0; i < type.count; i++)
             {
-                spawnPos = m_Squad.formation.ComputePosition(startTransform.position, startTransform.rotation, i);
+                Vector3 spawnPos;
+
+                if (m_Squad.formation)
+                {
+                    spawnPos = m_Squad.formation.ComputePosition(startTransform.position, startTransform.rotation, currentCount);
+                }
+                else
+                {
+                    float currentAngle = spawnAngle * currentCount;
+                    spawnPos = startTransform.position + (Vector3.right * Mathf.Cos(currentAngle) + Vector3.forward * Mathf.Sin(currentAngle)) * 2.0f;
+                }
+
+                Unit unit = Instantiate(type.prefab, spawnPos, startTransform.rotation).GetComponent<Unit>();
+
+                unitList.Add(unit);
+
+                currentCount++;
             }
-            else
-            {
-                float currentAngle = spawnAngle * i;
-                spawnPos = startTransform.position + (Vector3.right * Mathf.Cos(currentAngle) + Vector3.forward * Mathf.Sin(currentAngle)) * 2.0f;
-            }
-
-            GameObject unitInst;
-
-            if (i >= healerUnitCount) unitInst = Instantiate(supportUnitPrefab, spawnPos, startTransform.rotation);
-            else                      unitInst = Instantiate(healerUnitPrefab, spawnPos, startTransform.rotation);
-
-            Unit unit = unitInst.GetComponent<Unit>();
-
-            unitList.Add(unit);
         }
 
         m_Squad.Units = unitList;
