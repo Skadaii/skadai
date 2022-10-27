@@ -8,9 +8,14 @@ using static UnityEngine.UI.CanvasScaler;
 
 public class UnitSquad : MonoBehaviour
 {
+    #region Variables
+
     public FormationRule formation = null;
 
     [SerializeField] private GameObject virtualLeaderPrefab = null;
+    [SerializeField] private int squadTeam = 0;
+
+    public int SquadTeam {get {return squadTeam;}}
 
     public UnitLeader leader = null;
 
@@ -18,15 +23,12 @@ public class UnitSquad : MonoBehaviour
     private Vector3[] unitPositions;
 
     public float defendRange = 2f;
-    //private Unit defender = null;
-    //private Unit healer = null;
-    private GameObject leaderAttacker = null;
 
     public List<Unit> Units
     {
         get => units;
         set
-        {  
+        {
             units = value;
 
             foreach (Unit unit in units)
@@ -36,10 +38,24 @@ public class UnitSquad : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region MonoBehaviour
+
     private void Start()
     {
         OnInitializeLeader();
     }
+
+    private void OnDestroy()
+    {
+        if (leader && leader.TryGetComponent(out Movement leaderMovement))
+            leaderMovement.OnMoveChange.RemoveListener(UpdatePositions);
+    }
+
+    #endregion
+
+    #region Functions
 
     private void OnInitializeLeader()
     {
@@ -47,14 +63,10 @@ public class UnitSquad : MonoBehaviour
         leader ??= CreateVirtuaLeader();
 
         leader.SetSquad(this);
+        
+        if(leader.agent) leader.agent.team = squadTeam;
 
         leader.GetComponent<Movement>().OnMoveChange.AddListener(UpdatePositions);
-    }
-
-    private void OnDestroy()
-    {
-        if (leader && leader.TryGetComponent(out Movement leaderMovement))
-            leaderMovement.OnMoveChange.RemoveListener(UpdatePositions);
     }
 
     public void AssignHealerTo(Unit target)
@@ -70,10 +82,7 @@ public class UnitSquad : MonoBehaviour
 
             HealerUnit healer = unit as HealerUnit;
 
-            if (healer == null)
-                continue;
-
-            if (healer.target == leader)
+            if (healer == null || healer.target == leader)
                 continue;
 
             if(target != leader)
@@ -81,7 +90,7 @@ public class UnitSquad : MonoBehaviour
                 if (healer.target != null) 
                     continue;
 
-                if (healer.agent.CurrentHP <= target.agent.CurrentHP) continue;
+                if (healer.agent.CurrentHealth <= target.agent.CurrentHealth) continue;
             }
 
             Vector3 healerPosition = healer.transform.position;
@@ -103,7 +112,7 @@ public class UnitSquad : MonoBehaviour
         float lowestSqrDistance = float.MaxValue;
         SupportUnit nearestSupport = null;
 
-        if (target.agent.Aggressor == null) return;
+        if (target.agent.agressor == null) return;
 
         foreach (Unit unit in units)
         {
@@ -115,7 +124,7 @@ public class UnitSquad : MonoBehaviour
             if (support == null)
                 continue;
 
-            Vector3 dir = target.agent.Aggressor.transform.position - targetPosition;
+            Vector3 dir = target.agent.agressor.transform.position - targetPosition;
             float sqrDistance = Vector3.SqrMagnitude(support.transform.position - (targetPosition + dir.normalized * support.defendRange));
 
             if (lowestSqrDistance > sqrDistance)
@@ -134,10 +143,10 @@ public class UnitSquad : MonoBehaviour
         {
             Unit unit = units[i];
 
-            if (!unit.gameObject.activeInHierarchy || unit.HasDuty() /*|| unit == defender || unit == healer*/) continue;
+            if (unit && (!unit.gameObject.activeInHierarchy || unit.HasDuty())) continue;
 
             Vector3 pos = ComputeUnitPosition(i);
-            units[i].movement.MoveTo(pos);
+            unit.movement.MoveTo(pos);
             unitPositions[i] = pos;
         }
     }
@@ -180,4 +189,6 @@ public class UnitSquad : MonoBehaviour
 
         return leader.GetComponent<UnitLeader>();
     }
+
+    #endregion
 }

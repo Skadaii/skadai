@@ -8,28 +8,12 @@ using UnityEngine.UI;
 [RequireComponent(typeof(SphereCollider))]
 public class UnitAgent : AIAgent
 {
-    [Header("Perception Ranges")]
-
-    [SerializeField]
-    float HearingRadius = 10f;
-
-    [SerializeField]
-    float SightAngle = 0.5f;
-
-    [SerializeField]
-    float PrivacyRadius = 2f;
+    #region Variables
 
     NavMeshAgent NavMeshAgentInst;
-    Material MaterialInst;
 
-    private void SetMaterial(Color col)
-    {
-        MaterialInst.color = col;
-    }
-    public void SetWhiteMaterial() { SetMaterial(Color.white); }
-    public void SetRedMaterial() { SetMaterial(Color.red); }
-    public void SetBlueMaterial() { SetMaterial(Color.blue); }
-    public void SetYellowMaterial() { SetMaterial(Color.yellow); }
+    #endregion
+
 
     #region MonoBehaviour
 
@@ -39,15 +23,17 @@ public class UnitAgent : AIAgent
 
         NavMeshAgentInst = GetComponent<NavMeshAgent>();
 
-        Renderer rend = transform.Find("Body").GetComponent<Renderer>();
-        MaterialInst = rend.material;
+        m_gunTransform = transform.Find("Body/Gun");
 
-        GunTransform = transform.Find("Body/Gun");
-        if (GunTransform == null)
-            Debug.Log("could not find gun transform");
+        if (m_gunTransform == null)
+            Debug.LogWarning("could not find gun transform");
+    }
 
-        Trigger.radius = Mathf.Max(HearingRadius, SightAngle, PrivacyRadius);
+    private new void Update()
+    {
+        base.Update();
 
+        if(Target == null) CheckTarget();
     }
 
     protected new void OnEnable()
@@ -64,64 +50,35 @@ public class UnitAgent : AIAgent
 
     #endregion
 
-    #region PerceptionMethods
+    #region Functions
 
-    public bool IsInIntimateZone(Agent otherAgent)
-    {
-        if (!AgentTrespassers.Contains(otherAgent)) return false;
-
-        float distance = Vector3.Magnitude(otherAgent.transform.position - transform.position);
-
-        return distance < PrivacyRadius;
-    }
-
-    public bool IsInSightZone(Agent otherAgent)
-    {
-        if (!AgentTrespassers.Contains(otherAgent)) return false;
-
-        Vector3 dir = Vector3.Normalize(otherAgent.transform.position - transform.position);
-        float dot = Vector3.Dot(dir, transform.forward);
-
-        return SightAngle < dot;
-    }
-
-    public bool IsInHearingZone(Agent otherAgent)
-    {
-        if (!AgentTrespassers.Contains(otherAgent)) return false;
-
-        float distance = Vector3.Magnitude(otherAgent.transform.position - transform.position);
-
-        return distance < HearingRadius;
-    }
-
-    #endregion
-
-    #region MoveMethods
-    public void StopMove()
-    {
-        NavMeshAgentInst.isStopped = true;
-    }
+    public void StopMove() => NavMeshAgentInst.isStopped = true;
+    
     public void MoveTo(Vector3 dest)
     {
         NavMeshAgentInst.isStopped = false;
         NavMeshAgentInst.SetDestination(dest);
     }
 
-    #endregion
 
-    #region ActionMethods
+    public override void ShootAtTarget()
+    {
+        base.ShootAtTarget();
+    }
 
     private void SetTargetToAgressor()
     {
-        if(Target == null)
+        if (AgentTrespassers.Contains(agressor))
         {
-            Target = Aggressor;
+            Target ??= agressor.gameObject;
         }
     }
+    //  Consideration functions
 
-    #endregion
-
-    #region UtilsMethod
+    public override float HasTarget()
+    {
+        return base.HasTarget();
+    }
 
     #endregion
 }

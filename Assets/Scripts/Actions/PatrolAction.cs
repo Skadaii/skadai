@@ -10,7 +10,7 @@ public class PatrolAction : MonoBehaviour
 
     Movement movement = null;
 
-    [SerializeField] private float epsilon = 0.5f;
+    [SerializeField] private float epsilon = 0.1f;
 
     public float GetPatrolState()
     {

@@ -223,6 +223,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Duration: 2
-  IgnoreMask:
-    serializedVersion: 2
-    m_Bits: 0
+  m_impactShakeMaxRadius: 20
+  m_impactShakeScale: 0.1

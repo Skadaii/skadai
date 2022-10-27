@@ -3,5 +3,5 @@ using System.Collections.Generic;
 
 interface IDamageable
 {
-    void AddDamage(int damage, GameObject attacker);
+    void AddDamage(int damage, Agent attacker);
 }

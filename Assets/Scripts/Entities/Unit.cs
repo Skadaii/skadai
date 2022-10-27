@@ -15,11 +15,15 @@ public class Unit : MonoBehaviour
     public UnitSquad m_Squad { get; private set; } = null;
 
     // Start is called before the first frame update
-    void Awake()
+    protected void Awake()
     {
         movement = GetComponent<Movement>();
-        agent = GetComponent<Agent>();
+        agent    = GetComponent<Agent>();
+    }
 
+    private void Start()
+    {
+        if(agent && m_Squad) agent.team = m_Squad.SquadTeam;
     }
 
     protected void OnEnable()
@@ -35,6 +39,11 @@ public class Unit : MonoBehaviour
     public void CallForHeal()
     {
         m_Squad.AssignHealerTo(this);
+    }
+
+    public virtual void DefaultBehaviour()
+    {
+
     }
 
     public virtual void SetSquad(UnitSquad squad) => m_Squad = squad;

@@ -1,16 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TurretAgent : AIAgent
 {
-    void Start()
+    #region MonoBehaviour
+
+    private new void Start()
     {
-        GunTransform = transform.Find("Body/Gun");
-        if (GunTransform == null)
+        base.Start();
+
+        m_gunTransform = transform.Find("Body/Gun");
+        if (m_gunTransform == null)
             Debug.Log("could not find gun transform");
 
-        CurrentHP = MaxHP;
+        m_currentHealth = m_maxHealth;
     }
 
 
@@ -21,25 +23,18 @@ public class TurretAgent : AIAgent
         CheckTarget();
     }
 
+    #endregion
 
+    #region Functions
 
-    private void CheckTarget()
+    public override void ShootAtTarget()
     {
-        float minDistance = float.MaxValue;
-
-        GameObject newTarget = null;
-
-        AgentTrespassers.ForEach(agent =>
-        {
-            float distance = Vector3.SqrMagnitude(transform.position - agent.transform.position);
-
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                newTarget = agent.gameObject;
-            }
-        });
-
-        SetTarget(newTarget);
+        base.ShootAtTarget();
     }
+    public override float HasTarget()
+    {
+        return base.HasTarget();
+    }
+
+    #endregion
 }

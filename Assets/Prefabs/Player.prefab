@@ -244,20 +244,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aabe4fab0c81e74e97c00ca4ec9725f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BulletPower: 1000
-  BulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
+  team: 0
+  m_bulletPower: 1000
+  m_bulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
     type: 3}
-  MaxHP: 100
-  ShootFrequency: 1
+  m_maxHealth: 100
+  m_shootFrequency: 1
   OnHit:
     m_PersistentCalls:
       m_Calls: []
-  HPBarHeight: 1.5
-  HPBarPrefab: {fileID: 1553091337664375409, guid: dfdc7fa0997f2554b808ddef72b14e55,
+  m_healthBarYpos: 1.5
+  m_HealthBarPrefab: {fileID: 1553091337664375409, guid: dfdc7fa0997f2554b808ddef72b14e55,
     type: 3}
-  TargetCursorPrefab: {fileID: 1510336254582165163, guid: 7b6276c878e17d241921c647a7d9da0e,
+  agressor: {fileID: 0}
+  m_targetCursorPrefab: {fileID: 1510336254582165163, guid: 7b6276c878e17d241921c647a7d9da0e,
     type: 3}
-  NPCTargetCursorPrefab: {fileID: 7737544659063618026, guid: 0511cdf56d7924642937deb7c2bf69de,
+  m_NPCTargetCursorPrefab: {fileID: 4886261165655824618, guid: 2e6a27eb4d67dbd409df714a76de06cd,
     type: 3}
   leader: {fileID: 0}
 --- !u!114 &3361780827870377502
@@ -289,6 +291,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movement: {fileID: 0}
   agent: {fileID: 0}
+  assignedHealer: {fileID: 0}
+  assignedSupport: {fileID: 0}
 --- !u!114 &699720244595819133
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 	Camera viewCamera;
 	Vector3 velocity;
 
-    private Action OnMouseLeftClicked;
+    private Action<Vector3> OnMouseLeftClicked;
     private Action<Vector3> OnMouseRightClicked;
 
     private Movement movement;
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
         viewCamera = Camera.main;
 
-        OnMouseLeftClicked += Player.ShootForward;
+        OnMouseLeftClicked  += Player.Shoot;
         OnMouseRightClicked += Player.NPCShootToPosition;
     }
 
@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            OnMouseLeftClicked();
+            OnMouseLeftClicked(targetPos);
         }
         if (Input.GetMouseButtonDown(1))
         {

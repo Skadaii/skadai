@@ -9,7 +9,7 @@ public class SupportUnit : Unit
     public Unit target { get; private set; }
 
     public float defendRange = 2f;
-    private GameObject targetAgressor;
+    private Agent targetAgressor;
 
 
     private void OnDestroy()
@@ -31,15 +31,26 @@ public class SupportUnit : Unit
         if (target)
         {
             target.assignedSupport = this;
-            targetAgressor = target.agent.Aggressor;
+            targetAgressor = target.agent.agressor;
         }
     }
 
     public float TargetCoverNeedFactor()
     {
-        if (target != null)
+        if (target != null && target.gameObject.activeInHierarchy)
         {
-            return Convert.ToSingle(target.agent.Aggressor != null || agent.Aggressor != null);
+
+            bool targetIsBeingHurted = target.agent.agressor != null;
+            bool isCurrentlyProtectingTarget = false;
+
+            if(agent.agressor != null)
+            {
+                Vector3 agressorToAgent  = Vector3.Normalize(agent.agressor.transform.position - transform.position);
+                Vector3 agressorToTarget = Vector3.Normalize(agent.agressor.transform.position - target.transform.position);
+
+                isCurrentlyProtectingTarget = Vector3.Dot(agressorToTarget, agressorToAgent) >= 0.8f;
+            }
+            return Convert.ToSingle(targetIsBeingHurted || isCurrentlyProtectingTarget);
         }
 
         return 0f;

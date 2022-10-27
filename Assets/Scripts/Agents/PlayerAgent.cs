@@ -6,36 +6,33 @@ using System;
 
 public class PlayerAgent : Agent
 {
-    [SerializeField]
-    GameObject TargetCursorPrefab = null;
-    [SerializeField]
-    GameObject NPCTargetCursorPrefab = null;
+    [SerializeField] private GameObject m_targetCursorPrefab = null;
+    [SerializeField] private GameObject m_NPCTargetCursorPrefab = null;
 
-    GameObject TargetCursor = null;
-    GameObject NPCTargetCursor = null;
+    private GameObject m_targetCursor = null;
+    private GameObject m_NPCTargetCursor = null;
 
-    public UnitLeader leader = null;
-    Rigidbody rb;
+    [HideInInspector] public UnitLeader leader = null;
+
     void Start()
     {
-        GunTransform = transform.Find("Gun");
+        m_gunTransform = transform.Find("Gun");
 
-        CurrentHP = MaxHP;
+        m_currentHealth = m_maxHealth;
     }
     private new void Awake()
     {
         base.Awake();
 
         leader = GetComponent<UnitLeader>();
-        rb = GetComponent<Rigidbody>();
     }
 
     private GameObject GetTargetCursor()
     {
-        if (TargetCursor == null)
-            TargetCursor = Instantiate(TargetCursorPrefab);
+        if (m_targetCursor == null)
+            m_targetCursor = Instantiate(m_targetCursorPrefab);
 
-        return TargetCursor;
+        return m_targetCursor;
     }
 
     public void AimAtPosition(Vector3 pos)
@@ -55,6 +52,12 @@ public class PlayerAgent : Agent
         StartCoroutine(InstantiateTarget(pos, 5f));
     }
 
+    public void Shoot(Vector3 pos)
+    {
+        ShootForward();
+        StartCoroutine(InstantiateTarget(pos, 0.5f));
+    }
+
     protected override void OnHealthChange()
     {
         base.OnHealthChange();
@@ -66,14 +69,14 @@ public class PlayerAgent : Agent
 
     IEnumerator InstantiateTarget(Vector3 position, float time)
     {
-        if (NPCTargetCursor) Destroy(NPCTargetCursor);
+        if (m_NPCTargetCursor) Destroy(m_NPCTargetCursor);
 
-        GameObject target = Instantiate(NPCTargetCursorPrefab);
+        GameObject target = Instantiate(m_NPCTargetCursorPrefab);
         target.transform.position = position;
 
         UI_CircleSlider circle = target.GetComponentInChildren<UI_CircleSlider>();
 
-        NPCTargetCursor = target;
+        m_NPCTargetCursor = target;
 
         leader?.m_Squad?.SetTarget(target);
 
@@ -88,12 +91,10 @@ public class PlayerAgent : Agent
         }
 
         if(target) Destroy(target);
-
-        //leader.m_Squad.SetTarget(null);
     }
 
     public float IsAttacked()
     {
-        return Convert.ToSingle(Aggressor != null);
+        return Convert.ToSingle(agressor != null);
     }
 }
