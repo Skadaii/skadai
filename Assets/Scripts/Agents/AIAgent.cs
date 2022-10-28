@@ -29,29 +29,32 @@ public class AIAgent : Agent, IDamageable
         Trigger.enabled = false;
     }
 
-    protected void Start()
+    protected new void Start()
     {
+        base.Start();
+
         Trigger.enabled = true;    
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.isTrigger &&other.gameObject.TryGetComponent(out Agent agent) &&agent.team != team)
+        if (!other.isTrigger &&other.gameObject.TryGetComponent(out Agent agent) && agent.AgentTeam != m_agentTeam)
         {
-            Debug.Log(agent.GetType());
             OnAgentEnter(agent);
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (!other.isTrigger && other.gameObject.TryGetComponent(out Agent agent) && agent.team != team)
+        if (!other.isTrigger && other.gameObject.TryGetComponent(out Agent agent) && agent.AgentTeam != m_agentTeam)
         {
             OnAgentExit(agent);
         }
     }
 
-    protected void Update()
+    protected new void Update()
     {
+        base.Update();
+
         if (Target && !Target.gameObject.activeInHierarchy)
         {
             if(Target.TryGetComponent(out Agent agent))

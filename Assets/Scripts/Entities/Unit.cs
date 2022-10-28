@@ -6,13 +6,19 @@ using UnityEngine;
 [RequireComponent(typeof(Movement))]
 public class Unit : MonoBehaviour
 {
+    #region Variables
+
     [HideInInspector] public Movement movement = null;
     [HideInInspector] public Agent agent = null;
 
-    [HideInInspector] public Unit assignedHealer = null;
-    [HideInInspector] public Unit assignedSupport = null;
+    [HideInInspector] public HealerUnit  assignedHealer = null;
+    [HideInInspector] public SupportUnit assignedSupport = null;
 
     public UnitSquad m_Squad { get; private set; } = null;
+
+    #endregion
+
+    #region MonoBehaviour
 
     // Start is called before the first frame update
     protected void Awake()
@@ -21,9 +27,9 @@ public class Unit : MonoBehaviour
         agent    = GetComponent<Agent>();
     }
 
-    private void Start()
+    protected void Start()
     {
-        if(agent && m_Squad) agent.team = m_Squad.SquadTeam;
+        if(agent && m_Squad) agent.AgentTeam = m_Squad.SquadTeam;
     }
 
     protected void OnEnable()
@@ -34,19 +40,23 @@ public class Unit : MonoBehaviour
     protected void OnDisable()
     {
         agent?.OnHit.RemoveListener(CallForHeal);
+
+        if (assignedHealer) assignedHealer.Target   = null;
+        if (assignedSupport) assignedSupport.Target = null;
     }
+
+    #endregion
+
+    #region Functions
 
     public void CallForHeal()
     {
         m_Squad.AssignHealerTo(this);
     }
 
-    public virtual void DefaultBehaviour()
-    {
-
-    }
-
     public virtual void SetSquad(UnitSquad squad) => m_Squad = squad;
 
     public virtual bool HasDuty() { return false; }
+
+    #endregion
 }

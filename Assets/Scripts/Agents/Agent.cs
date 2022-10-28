@@ -5,41 +5,104 @@ using UnityEngine.Events;
 
 public class Agent : MonoBehaviour, IDamageable
 {
-    public int team;
+    #region Variables
 
-    [SerializeField]
-    protected float m_bulletPower = 1000f;
-    [SerializeField]
-    protected GameObject m_bulletPrefab;
-    protected Transform m_gunTransform;
-
-    [SerializeField]
-    protected int m_maxHealth = 100;
-    protected int m_currentHealth = 100;
-
-    [SerializeField]
-    protected float m_shootFrequency = 1f;
-
-    protected float m_nextShootDate = 0f;
-    
-    public UnityEvent OnHit = new UnityEvent();
-
+    [Header("Health parameters")]
+    [SerializeField] protected int m_maxHealth = 100;
     [SerializeField] private float m_healthBarYpos = 1.5f;
     [SerializeField] private GameObject m_HealthBarPrefab;
+
+    [Header("Shoot & bullet parameters")]
+    [SerializeField] protected float m_shootFrequency = 1f;
+    [SerializeField] protected GameObject m_bulletPrefab;
+    [SerializeField] protected float m_bulletPower = 1000f;
+    [SerializeField] protected int   m_bulletDamage = 10;
+
+    [Header("Team parameters")]
+
+    [SerializeField] protected ScriptableTeam m_agentTeam;
+
+    //  Other variables
+
+    protected int m_currentHealth = 100;
+    protected Transform m_gunTransform;
+    protected float m_nextShootDate = 0f;
+
+    private Material m_materialInstance;
+
+    // Attacked info variables
+
+    [HideInInspector] public Agent agressor;
+    [HideInInspector] public UnityEvent OnHit = new UnityEvent();
+
+    //  HealthBar variables
+
     private UI_HealthBar m_healthBar;
 
-    private float explosionShakeScale = 0.15f;
-    private float explosionShakeDuration = 0.25f;
+
+    //  Explosion FX variables
+
+    private float m_explosionShakeScale = 0.15f;
+    private float m_explosionShakeDuration = 0.25f;
     private GameObject m_explosionFX;
-    public  Agent agressor;
 
-    private Coroutine m_attackedStateCoroutine;
+    float m_considerBeingAttackedFor = 3f;
+    float m_lastAttackedTime = 0f;
 
+    #endregion
+
+
+    #region properties
+
+    public CapsuleCollider DamageCollider { get; private set; }
     public int CurrentHealth { get { return m_currentHealth; } }
+
+    public ScriptableTeam AgentTeam
+    {
+        get { return m_agentTeam; }
+
+        set 
+        { 
+            m_agentTeam = value;
+
+            if (m_materialInstance && m_agentTeam)
+            {
+                m_materialInstance.color = m_agentTeam.teamColor;
+            }
+        }
+    }
+
+    #endregion
+
+
+    #region MonoBehaviour
 
     protected void Awake()
     {
+        DamageCollider = GetComponent<CapsuleCollider>();
+
         m_explosionFX = Resources.Load("FXs/ParticleExplode") as GameObject;
+    
+        //  Search for Renderer to get the material instance
+
+        Renderer rend = transform.Find("Body").GetComponent<Renderer>();
+        m_materialInstance = rend.material;
+
+        if (m_materialInstance && m_agentTeam)
+        {
+            m_materialInstance.color = m_agentTeam.teamColor;
+        }
+
+        //  Search for gun transform
+
+        m_gunTransform = transform.Find("Body/Gun");
+
+        if (m_gunTransform == null) Debug.LogWarning("could not find gun transform");
+    }
+
+    protected void Start()
+    {
+        m_currentHealth = m_maxHealth;
     }
 
     protected void OnEnable()
@@ -59,25 +122,26 @@ public class Agent : MonoBehaviour, IDamageable
     protected void OnDisable()
     {
         if (m_healthBar != null) m_healthBar.Destroy();
+    }
 
-        if (m_attackedStateCoroutine != null)
+    protected void Update()
+    {
+        if(agressor != null && Time.time - m_lastAttackedTime >= m_considerBeingAttackedFor)
         {
-            StopCoroutine(m_attackedStateCoroutine);
-            m_attackedStateCoroutine = null;
+            agressor = null;
         }
     }
+
+    #endregion
+
+
+    #region Functions
 
     public void AddDamage(int amount, Agent attacker)
     {
         agressor = attacker;
 
-        if (m_attackedStateCoroutine != null)
-        {
-            StopCoroutine(m_attackedStateCoroutine);
-            m_attackedStateCoroutine = null;
-        }
-
-        m_attackedStateCoroutine = StartCoroutine(AttackedStateCooldown(3f));
+        m_lastAttackedTime = Time.time;
 
         m_currentHealth -= amount;
         if (m_currentHealth <= 0)
@@ -114,7 +178,7 @@ public class Agent : MonoBehaviour, IDamageable
 
         Destroy(explodeParticles, 2f);
 
-        GameInstance.Instance.playerCamera?.Shake(explosionShakeScale, explosionShakeDuration);
+        GameInstance.Instance.playerCamera?.Shake(m_explosionShakeScale, m_explosionShakeDuration);
     }
 
     public virtual void ShootForward()
@@ -126,7 +190,7 @@ public class Agent : MonoBehaviour, IDamageable
 
             if (bullet.TryGetComponent(out Bullet bulletComp))
             {
-                bulletComp.Shoot(this, GetBulletTrajectory(), m_bulletPower);
+                bulletComp.Shoot(this, GetBulletTrajectory(), m_bulletPower, m_bulletDamage);
             }
         }
     }
@@ -140,15 +204,6 @@ public class Agent : MonoBehaviour, IDamageable
         return Physics.SphereCast(ray, m_gunTransform.lossyScale.x * 0.5f, Vector3.Distance(start, end), ~(1 << gameObject.layer), QueryTriggerInteraction.Ignore);
     }
 
-    IEnumerator AttackedStateCooldown(float duration)
-    {
-        yield return new WaitForSeconds(duration);
-
-        agressor = null;
-
-        m_attackedStateCoroutine = null;
-    }
-
     public float GetLifePercent()
     {
         return (float)CurrentHealth / (float)m_maxHealth;
@@ -158,4 +213,6 @@ public class Agent : MonoBehaviour, IDamageable
     {
         return transform.forward;
     }
+
+    #endregion
 }

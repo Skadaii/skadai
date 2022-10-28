@@ -6,6 +6,8 @@ using UnityEngine.UIElements;
 [RequireComponent(typeof(UnitSquad))]
 public class SquadController : MonoBehaviour
 {
+    #region Internal Classes
+
     [System.Serializable]
     private class UnitType
     {
@@ -13,10 +15,20 @@ public class SquadController : MonoBehaviour
         public int count;
     }
 
+    #endregion
+
+
+    #region Variables
+
     [SerializeField] private List<UnitType> unitTypes = new List<UnitType>();
 
     private UnitSquad m_Squad = null;
     private int m_unitCount = 0;
+
+    #endregion
+
+
+    #region MonoBehaviour
 
     private void Awake()
     {
@@ -29,6 +41,11 @@ public class SquadController : MonoBehaviour
         
         if (m_unitCount != 0) InitializeUnits();
     }
+
+    #endregion
+
+
+    #region Functions
 
     private void InitializeUnits()
     {
@@ -64,4 +81,6 @@ public class SquadController : MonoBehaviour
 
         m_Squad.Units = unitList;
     }
+
+    #endregion
 }

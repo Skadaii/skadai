@@ -13,9 +13,9 @@ public class UnitSquad : MonoBehaviour
     public FormationRule formation = null;
 
     [SerializeField] private GameObject virtualLeaderPrefab = null;
-    [SerializeField] private int squadTeam = 0;
+    [SerializeField] private ScriptableTeam squadTeam;
 
-    public int SquadTeam {get {return squadTeam;}}
+    public ScriptableTeam SquadTeam {get {return squadTeam;}}
 
     public UnitLeader leader = null;
 
@@ -23,6 +23,11 @@ public class UnitSquad : MonoBehaviour
     private Vector3[] unitPositions;
 
     public float defendRange = 2f;
+
+    #endregion
+
+
+    #region Properties
 
     public List<Unit> Units
     {
@@ -40,6 +45,7 @@ public class UnitSquad : MonoBehaviour
 
     #endregion
 
+
     #region MonoBehaviour
 
     private void Start()
@@ -55,6 +61,7 @@ public class UnitSquad : MonoBehaviour
 
     #endregion
 
+
     #region Functions
 
     private void OnInitializeLeader()
@@ -64,37 +71,33 @@ public class UnitSquad : MonoBehaviour
 
         leader.SetSquad(this);
         
-        if(leader.agent) leader.agent.team = squadTeam;
+        if(leader.agent) leader.agent.AgentTeam = squadTeam;
 
         leader.GetComponent<Movement>().OnMoveChange.AddListener(UpdatePositions);
     }
 
     public void AssignHealerTo(Unit target)
     {
-        Vector3 targetPosition = target.transform.position;
         float lowestSqrDistance = float.MaxValue;
         HealerUnit nearestHealer = null;
 
         foreach (Unit unit in units)
         {
-            if(unit == target)
-                continue;
+            if(unit == target) continue;
 
             HealerUnit healer = unit as HealerUnit;
 
-            if (healer == null || healer.target == leader)
-                continue;
+            if (healer == null || healer.Target == leader) continue;
 
+            //  If the target is not the leader (who is priorized)
             if(target != leader)
             {
-                if (healer.target != null) 
-                    continue;
-
-                if (healer.agent.CurrentHealth <= target.agent.CurrentHealth) continue;
+                //  If the current healer already has a target, skip.
+                if (healer.Target != null) continue;
             }
 
             Vector3 healerPosition = healer.transform.position;
-            float sqrDistance = Vector3.SqrMagnitude(healerPosition - targetPosition);
+            float sqrDistance = Vector3.SqrMagnitude(healerPosition - target.transform.position);
 
             if(lowestSqrDistance > sqrDistance)
             {
@@ -103,12 +106,11 @@ public class UnitSquad : MonoBehaviour
             }
         }
 
-        nearestHealer?.SetTarget(target);
+        if(nearestHealer) nearestHealer.Target = target;
     }
 
     public void AssignSupportTo(Unit target)
     {
-        Vector3 targetPosition = target.transform.position;
         float lowestSqrDistance = float.MaxValue;
         SupportUnit nearestSupport = null;
 
@@ -116,25 +118,24 @@ public class UnitSquad : MonoBehaviour
 
         foreach (Unit unit in units)
         {
-            if (unit == target)
-                continue;
+            if (unit == target) continue;
 
             SupportUnit support = unit as SupportUnit;
 
-            if (support == null)
-                continue;
+            if (support == null) continue;
 
-            Vector3 dir = target.agent.agressor.transform.position - targetPosition;
-            float sqrDistance = Vector3.SqrMagnitude(support.transform.position - (targetPosition + dir.normalized * support.defendRange));
+            Vector3 coverPosition = support.GetCoverPosition(target.transform.position, target.agent.agressor.transform.position);
+
+            float sqrDistance = Vector3.SqrMagnitude(support.transform.position - coverPosition);
 
             if (lowestSqrDistance > sqrDistance)
             {
                 lowestSqrDistance = sqrDistance;
-                nearestSupport = support;
+                nearestSupport    = support;
             }
         }
 
-        nearestSupport?.SetTarget(target);
+        if(nearestSupport) nearestSupport.Target = target;
     }
 
     public void UpdatePositions()

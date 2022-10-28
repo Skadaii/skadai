@@ -6,6 +6,8 @@ using System;
 
 public class PlayerAgent : Agent
 {
+    #region Variables
+
     [SerializeField] private GameObject m_targetCursorPrefab = null;
     [SerializeField] private GameObject m_NPCTargetCursorPrefab = null;
 
@@ -14,18 +16,22 @@ public class PlayerAgent : Agent
 
     [HideInInspector] public UnitLeader leader = null;
 
-    void Start()
-    {
-        m_gunTransform = transform.Find("Gun");
+    #endregion
 
-        m_currentHealth = m_maxHealth;
-    }
+
+    #region MonoBehaviour
+
     private new void Awake()
     {
         base.Awake();
 
         leader = GetComponent<UnitLeader>();
     }
+
+    #endregion
+
+
+    #region Functions
 
     private GameObject GetTargetCursor()
     {
@@ -63,10 +69,6 @@ public class PlayerAgent : Agent
         base.OnHealthChange();
     }
 
-    public void MoveToward(Vector3 velocity)
-    {
-    }
-
     IEnumerator InstantiateTarget(Vector3 position, float time)
     {
         if (m_NPCTargetCursor) Destroy(m_NPCTargetCursor);
@@ -97,4 +99,6 @@ public class PlayerAgent : Agent
     {
         return Convert.ToSingle(agressor != null);
     }
+
+    #endregion
 }

@@ -6,47 +6,76 @@ using System;
 [RequireComponent(typeof(Movement))]
 public class SupportUnit : Unit
 {
-    public Unit target { get; private set; }
+    #region Variables
 
-    public float defendRange = 2f;
-    private Agent targetAgressor;
+    private Unit  m_target;
+    private Agent m_targetAgressor = null;
+
+    [SerializeField] private float defendRange = 2f;
 
 
-    private void OnDestroy()
+    #endregion
+
+    #region Properties
+
+    public Unit Target
     {
-        SetTarget(null);
-    }
+        get { return m_target; }
 
-    public void SetTarget(Unit newTarget)
-    {
-        //  Unregister the assigned healer from the old target
-        if (target != null) target.assignedSupport = null;
-
-        //  If the new target already has an assigned healer
-        if (newTarget?.assignedSupport != null) return;
-
-        target = newTarget;
-
-        //  If the new target is valid register 'this' as the assigned healer
-        if (target)
+        set
         {
-            target.assignedSupport = this;
-            targetAgressor = target.agent.agressor;
+            //  Unregister the assigned support from the old target
+            if (m_target != null) m_target.assignedSupport = null;
+
+            //  If the new target does not have an assigned support
+            if (value?.assignedSupport == null)
+            {
+                m_target = value;
+
+                //  If the new target is valid register 'this' as the assigned support
+                if (m_target)
+                {
+                    m_target.assignedSupport = this;
+                    m_targetAgressor = m_target.agent.agressor;
+                }
+            }
         }
     }
 
+    #endregion
+
+
+    #region MonoBehaviour
+
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        Target = null;
+    }
+
+    private void OnDestroy()
+    {
+        Target = null;
+    }
+
+    #endregion
+
+
+    #region Functions
+
     public float TargetCoverNeedFactor()
     {
-        if (target != null && target.gameObject.activeInHierarchy)
+        if (m_target != null && m_target.gameObject.activeInHierarchy)
         {
 
-            bool targetIsBeingHurted = target.agent.agressor != null;
+            bool targetIsBeingHurted = m_target.agent.agressor != null;
             bool isCurrentlyProtectingTarget = false;
 
             if(agent.agressor != null)
             {
                 Vector3 agressorToAgent  = Vector3.Normalize(agent.agressor.transform.position - transform.position);
-                Vector3 agressorToTarget = Vector3.Normalize(agent.agressor.transform.position - target.transform.position);
+                Vector3 agressorToTarget = Vector3.Normalize(agent.agressor.transform.position - m_target.transform.position);
 
                 isCurrentlyProtectingTarget = Vector3.Dot(agressorToTarget, agressorToAgent) >= 0.8f;
             }
@@ -58,12 +87,20 @@ public class SupportUnit : Unit
 
     public void Cover()
     {
-        Vector3 dir = targetAgressor.transform.position - target.transform.position;
-        movement.MoveTo(target.transform.position + dir.normalized * defendRange);
+        movement.MoveTo(GetCoverPosition(m_target.transform.position, m_targetAgressor.transform.position));
+    }
+
+    public Vector3 GetCoverPosition(Vector3 targetPosition, Vector3 agressorPosition)
+    {
+        Vector3 dir = agressorPosition - targetPosition;
+
+        return targetPosition + dir.normalized * defendRange;
     }
 
     public override bool HasDuty()
     {
         return TargetCoverNeedFactor() > 0f;
     }
+
+    #endregion
 }

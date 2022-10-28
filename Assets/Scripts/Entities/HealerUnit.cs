@@ -6,6 +6,8 @@ using System;
 [RequireComponent(typeof(Movement))]
 public class HealerUnit : Unit
 {
+    #region Variables
+
     [SerializeField] private int   m_healPower = 5;
     [SerializeField] private float m_healCooldown = 1f;
     [SerializeField] private float m_healingRadius = 2f;
@@ -13,10 +15,40 @@ public class HealerUnit : Unit
     private bool  m_canHeal = false;
     private float m_lastTimeHealing = 0f;
 
-    public Unit target { get; private set; }
+    private Unit m_target;
 
     private GameObject m_healFX;
     private ParticleSystem m_healFParticles;
+
+    #endregion
+
+
+    #region Properties
+
+    public Unit Target
+    {
+        get { return m_target;  }
+
+        set
+        {
+            //  Unregister the assigned healer from the old target
+            if (m_target != null) m_target.assignedHealer = null;
+
+            //  If the new target does not have an assigned healer
+            if (value?.assignedHealer == null)
+            {
+                m_target = value;
+
+                //  If the new target is valid register 'this' as the assigned healer
+                if (m_target) m_target.assignedHealer = this;
+            }
+        }
+    }
+
+    #endregion
+
+
+    #region MonoBehaviour
 
     protected new void Awake()
     {
@@ -31,8 +63,9 @@ public class HealerUnit : Unit
         }
     }
 
-    private void Update()
+    protected void Update()
     {
+        //  Healer timer
         if(!m_canHeal)
         {
             if(Time.time - m_lastTimeHealing >= m_healCooldown)
@@ -43,36 +76,31 @@ public class HealerUnit : Unit
         }
     }
 
+    protected new void OnDisable()
+    {
+        base.OnDisable();
+
+        Target = null;
+    }
+
     private void OnDestroy()
     {
-        SetTarget(null);
+        Target = null;
     }
 
-    
-    public void SetTarget(Unit newTarget)
-    {
-        //  Unregister the assigned healer from the old target
-        if(target != null) target.assignedHealer = null;
+    #endregion
 
-        //  If the new target already has an assigned healer
-        if (newTarget?.assignedHealer != null) return;
 
-        target = newTarget;
-
-        //  If the new target is valid register 'this' as the assigned healer
-        if (target) target.assignedHealer = this;
-
-        TryStopParticles();
-    }
+    #region Functions
 
     public float TargetHealNeedFactor()
     {
-        return target != null && target.gameObject.activeInHierarchy ? Mathf.Max(1f - target.agent.GetLifePercent(), 0f) : 0f;
+        return m_target != null && m_target.gameObject.activeInHierarchy ? Mathf.Max(1f - m_target.agent.GetLifePercent(), 0f) : 0f;
     }
 
     public void Heal()
     {
-        Vector3 targetPos = target.transform.position;
+        Vector3 targetPos = m_target.transform.position;
         Vector3 position = targetPos + Vector3.Normalize(transform.position - targetPos) * m_healingRadius;
         movement.MoveTo(position);
 
@@ -80,18 +108,14 @@ public class HealerUnit : Unit
         {
             TryStartParticles();
 
-            if (m_canHeal && target.agent.AddHealth(m_healPower))
+            if (m_canHeal && m_target.agent.AddHealth(m_healPower))
             {
                 // Stop healing
 
-                SetTarget(null); 
+                Target = null; 
             }
 
             m_canHeal = false;
-        }
-        else
-        {
-            TryStopParticles();
         }
     }
 
@@ -99,9 +123,8 @@ public class HealerUnit : Unit
     {
         if (m_healFParticles && !m_healFParticles.isPlaying)
         {
-            
             m_healFParticles.Play();
-            m_healFParticles.transform.SetParent(target.transform);
+            m_healFParticles.transform.SetParent(m_target.transform);
             m_healFParticles.transform.localPosition = Vector3.zero;
         }
     }
@@ -111,7 +134,6 @@ public class HealerUnit : Unit
         if (m_healFParticles && m_healFParticles.isPlaying)
         {
             m_healFParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-            m_healFParticles.transform.SetParent(null);
         }
     }
 
@@ -119,4 +141,6 @@ public class HealerUnit : Unit
     {
         return TargetHealNeedFactor() > 0f;
     }
+
+    #endregion
 }

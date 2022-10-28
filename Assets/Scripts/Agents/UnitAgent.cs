@@ -22,11 +22,6 @@ public class UnitAgent : AIAgent
         base.Awake();
 
         NavMeshAgentInst = GetComponent<NavMeshAgent>();
-
-        m_gunTransform = transform.Find("Body/Gun");
-
-        if (m_gunTransform == null)
-            Debug.LogWarning("could not find gun transform");
     }
 
     private new void Update()
