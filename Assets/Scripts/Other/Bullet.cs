@@ -40,7 +40,9 @@ public class Bullet : MonoBehaviour
         {
             if (hit.collider.gameObject.TryGetComponent(out Agent agent) && agent.AgentTeam == m_shooter.AgentTeam) return;
 
-            if(hit.collider.gameObject.TryGetComponent(out IDamageable damageable))
+            IDamageable damageable = hit.collider.gameObject.GetComponentInParent<IDamageable>();
+
+            if (damageable != null || hit.collider.gameObject.TryGetComponent(out damageable))
             {
                 //  If the hitted collider is a damage collider then apply basic damage else apply reduced damages (for tanks)
                 damageable.AddDamage(damageable.DamageCollider == hit.collider ? m_damages : m_damages/2, m_shooter);
@@ -74,6 +76,7 @@ public class Bullet : MonoBehaviour
 
         m_rigidBody.isKinematic = true;
 
+        transform.position = hit.point;
         Destroy(gameObject, 2f);
         Destroy(hitParticles, 2f);
     }

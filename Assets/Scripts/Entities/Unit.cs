@@ -16,6 +16,8 @@ public class Unit : MonoBehaviour
 
     public UnitSquad m_Squad { get; private set; } = null;
 
+    private bool m_callForHeal = false;
+
     #endregion
 
     #region MonoBehaviour
@@ -30,6 +32,14 @@ public class Unit : MonoBehaviour
     protected void Start()
     {
         if(agent && m_Squad) agent.AgentTeam = m_Squad.SquadTeam;
+    }
+
+    protected void FixedUpdate()
+    {
+        if(m_callForHeal)
+        {
+            m_callForHeal = !m_Squad.AssignHealerTo(this);
+        }
     }
 
     protected void OnEnable()
@@ -51,7 +61,7 @@ public class Unit : MonoBehaviour
 
     public void CallForHeal()
     {
-        m_Squad.AssignHealerTo(this);
+        m_callForHeal = true;
     }
 
     public virtual void SetSquad(UnitSquad squad) => m_Squad = squad;

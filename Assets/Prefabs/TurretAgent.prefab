@@ -145,7 +145,7 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &3686662420958734141
@@ -183,14 +183,14 @@ MonoBehaviour:
   m_shootFrequency: 0.45
   m_bulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
     type: 3}
-  m_bulletPower: 1000
+  m_bulletPower: 4000
   m_bulletDamage: 10
   m_agentTeam: {fileID: 11400000, guid: ff47a4b989f49ec41b41bf49ce9169e4, type: 2}
   agressor: {fileID: 0}
   OnHit:
     m_PersistentCalls:
       m_Calls: []
-  rotationSpeed: 10
+  m_rotationSpeed: 10
 --- !u!114 &1663624517658826442
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -76,7 +76,7 @@ public class UnitSquad : MonoBehaviour
         leader.GetComponent<Movement>().OnMoveChange.AddListener(UpdatePositions);
     }
 
-    public void AssignHealerTo(Unit target)
+    public bool AssignHealerTo(Unit target)
     {
         float lowestSqrDistance = float.MaxValue;
         HealerUnit nearestHealer = null;
@@ -106,15 +106,22 @@ public class UnitSquad : MonoBehaviour
             }
         }
 
-        if(nearestHealer) nearestHealer.Target = target;
+        if (nearestHealer)
+        {
+            nearestHealer.Target = target;
+            return true;
+        }
+
+        return false;
     }
 
-    public void AssignSupportTo(Unit target)
+    public bool AssignSupportTo(Unit target)
     {
         float lowestSqrDistance = float.MaxValue;
         SupportUnit nearestSupport = null;
 
-        if (target.agent.agressor == null) return;
+        //  Don't need support anymore
+        if (target.agent.agressor == null) return true;
 
         foreach (Unit unit in units)
         {
@@ -131,11 +138,17 @@ public class UnitSquad : MonoBehaviour
             if (lowestSqrDistance > sqrDistance)
             {
                 lowestSqrDistance = sqrDistance;
-                nearestSupport    = support;
+                nearestSupport = support;
             }
         }
 
-        if(nearestSupport) nearestSupport.Target = target;
+        if (nearestSupport)
+        {
+            nearestSupport.Target = target;
+            return true;
+        }
+
+        return false;
     }
 
     public void UpdatePositions()

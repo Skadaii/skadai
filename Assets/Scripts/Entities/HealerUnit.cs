@@ -76,11 +76,20 @@ public class HealerUnit : Unit
         }
     }
 
+    protected new void OnEnable()
+    {
+        base.OnEnable();
+
+        agent?.OnHit.AddListener(CallForCover);
+    }
+
     protected new void OnDisable()
     {
         base.OnDisable();
 
         Target = null;
+
+        agent?.OnHit.RemoveListener(CallForCover);
     }
 
     private void OnDestroy()
@@ -129,12 +138,9 @@ public class HealerUnit : Unit
         }
     }
 
-    private void TryStopParticles()
+    public void CallForCover()
     {
-        if (m_healFParticles && m_healFParticles.isPlaying)
-        {
-            m_healFParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-        }
+        m_Squad.AssignSupportTo(this);
     }
 
     public override bool HasDuty()

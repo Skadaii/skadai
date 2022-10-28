@@ -6,13 +6,13 @@ public class AIAgent : Agent, IDamageable
 {
     #region Variables
 
-    protected SphereCollider Trigger;
+    protected SphereCollider m_trigger;
 
-    protected List<Agent> AgentTrespassers = new List<Agent>();
+    protected HashSet<Agent> m_agentTrespassers = new HashSet<Agent>();
 
-    protected GameObject Target = null;
+    protected GameObject m_target = null;
 
-    [SerializeField] private float rotationSpeed = 10f;
+    [SerializeField] private float m_rotationSpeed = 10f;
 
     #endregion
 
@@ -24,16 +24,16 @@ public class AIAgent : Agent, IDamageable
 
         m_currentHealth = m_maxHealth;
 
-        Trigger = GetComponent<SphereCollider>();
+        m_trigger = GetComponent<SphereCollider>();
 
-        Trigger.enabled = false;
+        m_trigger.enabled = false;
     }
 
     protected new void Start()
     {
         base.Start();
 
-        Trigger.enabled = true;    
+        m_trigger.enabled = true;    
     }
 
     private void OnTriggerEnter(Collider other)
@@ -55,14 +55,14 @@ public class AIAgent : Agent, IDamageable
     {
         base.Update();
 
-        if (Target && !Target.gameObject.activeInHierarchy)
+        if (m_target && !m_target.gameObject.activeInHierarchy)
         {
-            if(Target.TryGetComponent(out Agent agent))
+            if(m_target.TryGetComponent(out Agent agent))
             {
                 OnAgentExit(agent);
             }
 
-            Target = null;
+            m_target = null;
         }
     }
 
@@ -73,15 +73,27 @@ public class AIAgent : Agent, IDamageable
 
     public virtual void ShootAtTarget()
     {
-        if (!Target) return;
+        if (m_target != null)
+        {
+            ShootAt(m_target);
+        }
+        else if (agressor != null)
+        {
+            ShootAt(agressor.gameObject);
+        }
+    }
+
+    public void ShootAt(GameObject target)
+    {
+        if (!target) return;
 
         // Look at target position
         
-        Vector3 desiredForward = Target.transform.position - transform.position;
+        Vector3 desiredForward = target.transform.position - transform.position;
 
         desiredForward = Vector3.Normalize(new Vector3(desiredForward.x, 0f, desiredForward.z));
 
-        transform.forward = Vector3.Slerp(transform.forward, desiredForward, Time.deltaTime * rotationSpeed);
+        transform.forward = Vector3.Slerp(transform.forward, desiredForward, Time.deltaTime * m_rotationSpeed);
 
         //  Can shoot ?
         if (Vector3.SqrMagnitude(transform.forward - desiredForward) < 0.1f && Time.time >= m_nextShootDate)
@@ -105,26 +117,26 @@ public class AIAgent : Agent, IDamageable
 
     public void SetTarget(GameObject obj)
     {
-        Target = obj;
+        m_target = obj;
     }
 
     public virtual void OnAgentEnter(Agent agent)
     {
-        AgentTrespassers.Add(agent);
+        m_agentTrespassers.Add(agent);
     }
 
     public virtual void OnAgentExit(Agent agent)
     {
-        if (Target == agent.gameObject) Target = null;
+        if (m_target == agent.gameObject) m_target = null;
 
-        AgentTrespassers.Remove(agent);
+        m_agentTrespassers.Remove(agent);
     }
 
     protected override Vector3 GetBulletTrajectory()
     {
-        return Target == null ? 
+        return m_target == null ? 
             transform.forward : 
-            Vector3.Normalize(new Vector3(Target.transform.position.x - m_gunTransform.position.x, 0f, Target.transform.position.z - m_gunTransform.position.z));
+            Vector3.Normalize(new Vector3(m_target.transform.position.x - m_gunTransform.position.x, 0f, m_target.transform.position.z - m_gunTransform.position.z));
     }
 
 
@@ -134,8 +146,8 @@ public class AIAgent : Agent, IDamageable
 
         Agent newTarget = null;
 
-        AgentTrespassers.ForEach(agent =>
-        {
+        foreach(Agent agent in m_agentTrespassers)
+        { 
             float distance = Vector3.SqrMagnitude(transform.position - agent.transform.position);
 
             if (distance < minDistance)
@@ -143,7 +155,7 @@ public class AIAgent : Agent, IDamageable
                 minDistance = distance;
                 newTarget = agent;
             }
-        });
+        }
 
         SetTarget(newTarget != null ? newTarget.gameObject : null);
     }
@@ -153,7 +165,7 @@ public class AIAgent : Agent, IDamageable
 
     public virtual float HasTarget()
     {
-        return System.Convert.ToSingle(Target != null);
+        return System.Convert.ToSingle(m_target != null || agressor != null);
     }
 
     #endregion

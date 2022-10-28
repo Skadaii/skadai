@@ -28,22 +28,21 @@ public class UnitAgent : AIAgent
     {
         base.Update();
 
-        if(Target == null) CheckTarget();
+        if(m_target == null) CheckTarget();
     }
 
     protected new void OnEnable()
     {
         base.OnEnable();
-        OnHit.AddListener(SetTargetToAgressor);
     }
 
     protected new void OnDisable()
     {
         base.OnDisable();
-        OnHit.RemoveListener(SetTargetToAgressor);
     }
 
     #endregion
+
 
     #region Functions
 
@@ -55,25 +54,8 @@ public class UnitAgent : AIAgent
         NavMeshAgentInst.SetDestination(dest);
     }
 
-
-    public override void ShootAtTarget()
-    {
-        base.ShootAtTarget();
-    }
-
-    private void SetTargetToAgressor()
-    {
-        if (AgentTrespassers.Contains(agressor))
-        {
-            Target ??= agressor.gameObject;
-        }
-    }
-    //  Consideration functions
-
-    public override float HasTarget()
-    {
-        return base.HasTarget();
-    }
+    public override float HasTarget() => base.HasTarget();
+    public override void ShootAtTarget() => base.ShootAtTarget();
 
     #endregion
 }

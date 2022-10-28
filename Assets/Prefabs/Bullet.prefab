@@ -144,7 +144,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.5
+  m_Time: 0.25
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -154,20 +154,20 @@ TrailRenderer:
       - serializedVersion: 3
         time: 0
         value: 0.25
-        inSlope: -0.7944098
-        outSlope: -0.7944098
+        inSlope: -0.713274
+        outSlope: -0.713274
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.40801457
+        outWeight: 0.20018372
       - serializedVersion: 3
-        time: 0.5
+        time: 0.99180293
         value: 0
-        inSlope: -0.21438518
-        outSlope: -0.21438518
+        inSlope: -0.043348
+        outSlope: -0.043348
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.36247718
+        inWeight: 0.5296523
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -175,7 +175,7 @@ TrailRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 1, g: 0.63517684, b: 0.10196078, a: 1}
-      key1: {r: 0.990566, g: 0.9477748, b: 0.39871833, a: 0}
+      key1: {r: 1, g: 0.9961956, b: 0.7232704, a: 0}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}

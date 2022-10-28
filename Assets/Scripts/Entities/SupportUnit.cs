@@ -77,7 +77,7 @@ public class SupportUnit : Unit
                 Vector3 agressorToAgent  = Vector3.Normalize(agent.agressor.transform.position - transform.position);
                 Vector3 agressorToTarget = Vector3.Normalize(agent.agressor.transform.position - m_target.transform.position);
 
-                isCurrentlyProtectingTarget = Vector3.Dot(agressorToTarget, agressorToAgent) >= 0.8f;
+                isCurrentlyProtectingTarget = Vector3.Dot(agressorToTarget, agressorToAgent) >= 0.75f;
             }
             return Convert.ToSingle(targetIsBeingHurted || isCurrentlyProtectingTarget);
         }
