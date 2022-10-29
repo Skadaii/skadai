@@ -31,6 +31,6 @@ public class UnitLeader : Unit
 
     public void CallForCover()
     {
-        m_Squad.AssignSupportTo(this);
+        m_squad.AssignSupportTo(this);
     }
 }

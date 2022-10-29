@@ -32,7 +32,7 @@ public class Agent : MonoBehaviour, IDamageable
 
     // Attacked info variables
 
-    [HideInInspector] public Agent agressor;
+    protected Agent m_agressor;
     [HideInInspector] public UnityEvent OnHit = new UnityEvent();
 
     //  HealthBar variables
@@ -58,6 +58,21 @@ public class Agent : MonoBehaviour, IDamageable
     public GameObject HurtFX { get; protected set; }
 
     public int CurrentHealth { get { return m_currentHealth; } }
+
+    public Agent Agressor
+    {
+        get { return m_agressor; }
+
+        set
+        {
+            m_agressor = value;
+
+            if (m_agressor)
+            {
+                m_lastAttackedTime = Time.time;
+            }
+        }
+    }
 
     public ScriptableTeam AgentTeam
     {
@@ -126,9 +141,9 @@ public class Agent : MonoBehaviour, IDamageable
 
     protected void Update()
     {
-        if(agressor != null && Time.time - m_lastAttackedTime >= m_considerBeingAttackedFor)
+        if(m_agressor != null && Time.time - m_lastAttackedTime >= m_considerBeingAttackedFor)
         {
-            agressor = null;
+            m_agressor = null;
         }
     }
 
@@ -139,7 +154,8 @@ public class Agent : MonoBehaviour, IDamageable
 
     public void AddDamage(int damage, Agent attacker, RaycastHit hit, bool playFX = false)
     {
-        agressor = attacker;
+        //  Important to call Agressor property set here
+        Agressor = attacker;
 
         m_lastAttackedTime = Time.time;
 

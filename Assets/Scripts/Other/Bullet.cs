@@ -36,29 +36,37 @@ public class Bullet : MonoBehaviour
     {
         if (Physics.SphereCast(transform.position, transform.lossyScale.x * 0.5f, m_velocity.normalized, out RaycastHit hit, m_velocity.magnitude * Time.fixedDeltaTime, -1, QueryTriggerInteraction.Ignore))
         {
-            if (hit.collider.gameObject.TryGetComponent(out Agent agent) && agent.AgentTeam == m_shooter.AgentTeam) { }
-            else
-            {
-                IDamageable damageable = hit.collider.gameObject.GetComponentInParent<IDamageable>();
+            Agent agent = hit.collider.gameObject.GetComponentInParent<Agent>();
 
-                if (damageable != null || hit.collider.gameObject.TryGetComponent(out damageable))
+            if (agent || hit.collider.gameObject.TryGetComponent(out agent))
+            {
+                if (agent.AgentTeam == m_shooter.AgentTeam)
                 {
-                    //  If the hitted collider is a damage collider then apply basic damage else apply reduced damages (for tanks)
-                    bool dealHeavyDamage = damageable.DamageCollider == hit.collider;
-                    damageable.AddDamage(dealHeavyDamage ? m_damages : m_damages / 2, m_shooter, hit, dealHeavyDamage);
+                    UpdatePos();
+                    return;
                 }
 
-                OnHitEffects(hit);
-                return;
+                //  If the hitted collider is a damage collider then apply basic damage else apply reduced damages (for tanks)
+                bool dealHeavyDamage = agent.DamageCollider == hit.collider;
+                agent.AddDamage(dealHeavyDamage ? m_damages : m_damages / 2, m_shooter, hit, dealHeavyDamage);
             }
+
+            OnHitEffects(hit);
+            return;
         }
-        transform.position += m_velocity * Time.fixedDeltaTime;
+
+        UpdatePos();
     }
 
     #endregion
 
 
     #region Functions
+
+    private void UpdatePos()
+    {
+        transform.position += m_velocity * Time.fixedDeltaTime;
+    }
 
     private void OnHitEffects(RaycastHit hit)
     {

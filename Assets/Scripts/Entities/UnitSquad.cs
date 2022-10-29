@@ -23,6 +23,7 @@ public class UnitSquad : MonoBehaviour
     private Vector3[] unitPositions;
 
     public float defendRange = 2f;
+    public float alertMaxDistance = 10f;
 
     #endregion
 
@@ -121,7 +122,7 @@ public class UnitSquad : MonoBehaviour
         SupportUnit nearestSupport = null;
 
         //  Don't need support anymore
-        if (target.agent.agressor == null) return true;
+        if (target.agent.Agressor == null) return true;
 
         foreach (Unit unit in units)
         {
@@ -131,7 +132,7 @@ public class UnitSquad : MonoBehaviour
 
             if (support == null) continue;
 
-            Vector3 coverPosition = support.GetCoverPosition(target.transform.position, target.agent.agressor.transform.position);
+            Vector3 coverPosition = support.GetCoverPosition(target.transform.position, target.agent.Agressor.transform.position);
 
             float sqrDistance = Vector3.SqrMagnitude(support.transform.position - coverPosition);
 
@@ -149,6 +150,19 @@ public class UnitSquad : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void ReceiveAlert(Unit fromUnit)
+    {
+        foreach (Unit unit in units)
+        {
+            if (unit.agent.Agressor) continue;
+
+            if (Vector3.SqrMagnitude(unit.transform.position - fromUnit.transform.position) < alertMaxDistance * alertMaxDistance) continue;
+
+            //  One for all, all for one
+            unit.agent.Agressor = fromUnit.agent.Agressor;
+        }
     }
 
     public void UpdatePositions()

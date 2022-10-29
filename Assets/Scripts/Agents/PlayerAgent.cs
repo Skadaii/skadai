@@ -83,7 +83,7 @@ public class PlayerAgent : Agent
 
         m_NPCTargetCursor = target;
 
-        leader?.m_Squad?.SetTarget(target);
+        leader?.m_squad?.SetTarget(target);
 
         float startTime = Time.time;
 
@@ -100,7 +100,16 @@ public class PlayerAgent : Agent
 
     public float IsAttacked()
     {
-        return Convert.ToSingle(agressor != null);
+        return Convert.ToSingle(m_agressor != null);
+    }
+
+    protected override void OnDeath()
+    {
+        base.OnDeath();
+
+        gameObject.SetActive(false);
+
+        GameInstance.Instance?.GameOver();
     }
 
     #endregion

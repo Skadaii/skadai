@@ -41,10 +41,13 @@ public class CameraController : MonoBehaviour
 
         while(Time.time - startTime < duration)
         {
-            float x = Random.Range(-1f, 1f) * strength;
-            float y = Random.Range(-1f, 1f) * strength;
+            if (Time.timeScale != 0f)
+            {
+                float x = Random.Range(-1f, 1f) * strength;
+                float y = Random.Range(-1f, 1f) * strength;
 
-            m_cameraObject.transform.localPosition = new Vector3(x, y, originalPosition.z);
+                m_cameraObject.transform.localPosition = new Vector3(x, y, originalPosition.z);
+            }
 
             yield return null;
         }

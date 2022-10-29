@@ -1,16 +1,15 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.Events;
-using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Variables
+
     [SerializeField]
     float moveSpeed = 6f;
 
     PlayerAgent Player;
 
-	Camera viewCamera;
 	Vector3 velocity;
 
     private Action<Vector3> OnMouseLeftClicked;
@@ -18,12 +17,15 @@ public class PlayerController : MonoBehaviour
 
     private Movement movement;
 
+    #endregion
+
+
+    #region MonoBehaviour
+
     void Start ()
     {
         Player = GetComponent<PlayerAgent>();
         movement = GetComponent<Movement>();
-
-        viewCamera = Camera.main;
 
         OnMouseLeftClicked  += Player.Shoot;
         OnMouseRightClicked += Player.NPCShootToPosition;
@@ -31,10 +33,19 @@ public class PlayerController : MonoBehaviour
 
     void Update ()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (Time.timeScale != 0f) GameInstance.Instance.Pause();
+            else GameInstance.Instance.Resume();
+        }
+
+        if (Time.timeScale == 0f) return;
+
         int floorLayer = 1 << LayerMask.NameToLayer("Floor");
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit raycastInfo;
         Vector3 targetPos = Vector3.zero;
+
         if (Physics.Raycast(ray, out raycastInfo, Mathf.Infinity, floorLayer))
         {
             Vector3 newPos = raycastInfo.point;
@@ -55,8 +66,11 @@ public class PlayerController : MonoBehaviour
             OnMouseRightClicked(targetPos);
         }
     }
+
 	void FixedUpdate()
     {
         movement.MoveToward(velocity);
 	}
+
+    #endregion
 }

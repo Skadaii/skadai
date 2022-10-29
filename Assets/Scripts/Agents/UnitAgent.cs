@@ -31,7 +31,10 @@ public class UnitAgent : AIAgent
     {
         base.Update();
 
-        if(m_target == null) CheckTarget();
+        if (m_target == null)
+        {
+            CheckTarget();
+        }
     }
 
     protected new void OnEnable()

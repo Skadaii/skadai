@@ -14,6 +14,8 @@ public class AIAgent : Agent, IDamageable
 
     [SerializeField] private float m_rotationSpeed = 10f;
 
+    private LayerMask m_ignoreLayer;
+
     #endregion
 
     #region MonoBehaviour
@@ -27,6 +29,8 @@ public class AIAgent : Agent, IDamageable
         m_trigger = GetComponent<SphereCollider>();
 
         m_trigger.enabled = false;
+
+        m_ignoreLayer = ~LayerMask.GetMask("Entity");
     }
 
     protected new void Start()
@@ -75,11 +79,14 @@ public class AIAgent : Agent, IDamageable
     {
         if (m_target != null)
         {
+            //  If the target is an agent and is not in sight skip.
+            if (m_target.TryGetComponent(out Agent agent) && !CanSeeTarget(m_target)) return;
+
             ShootAt(m_target);
         }
-        else if (agressor != null && agressor.gameObject.activeInHierarchy)
+        else if (m_agressor != null && CanSeeTarget(m_agressor.gameObject) && m_agressor.gameObject.activeInHierarchy)
         {
-            ShootAt(agressor.gameObject);
+            ShootAt(m_agressor.gameObject);
         }
     }
 
@@ -150,6 +157,8 @@ public class AIAgent : Agent, IDamageable
         { 
             float distance = Vector3.SqrMagnitude(transform.position - agent.transform.position);
 
+            if (!CanSeeTarget(agent.gameObject)) continue;
+
             if (distance < minDistance)
             {
                 minDistance = distance;
@@ -165,7 +174,15 @@ public class AIAgent : Agent, IDamageable
 
     public virtual float HasTarget()
     {
-        return System.Convert.ToSingle(m_target != null || (agressor != null && agressor.gameObject.activeInHierarchy));
+        return System.Convert.ToSingle(m_target != null || (m_agressor != null && m_agressor.gameObject.activeInHierarchy));
+    }
+
+
+    public bool CanSeeTarget(GameObject target)
+    {
+        Vector3 dir = target.transform.position - transform.position;
+
+        return !Physics.Raycast(transform.position, dir.normalized, dir.magnitude, m_ignoreLayer, QueryTriggerInteraction.Ignore);
     }
 
     #endregion

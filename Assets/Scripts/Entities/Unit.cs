@@ -14,7 +14,7 @@ public class Unit : MonoBehaviour
     [HideInInspector] public HealerUnit  assignedHealer = null;
     [HideInInspector] public SupportUnit assignedSupport = null;
 
-    public UnitSquad m_Squad { get; private set; } = null;
+    public UnitSquad m_squad { get; private set; } = null;
 
     private bool m_callForHeal = false;
 
@@ -31,25 +31,27 @@ public class Unit : MonoBehaviour
 
     protected void Start()
     {
-        if(agent && m_Squad) agent.AgentTeam = m_Squad.SquadTeam;
+        if(agent && m_squad) agent.AgentTeam = m_squad.SquadTeam;
     }
 
     protected void FixedUpdate()
     {
         if(m_callForHeal)
         {
-            m_callForHeal = !m_Squad.AssignHealerTo(this);
+            m_callForHeal = !m_squad.AssignHealerTo(this);
         }
     }
 
     protected void OnEnable()
     {
         agent?.OnHit.AddListener(CallForHeal);
+        agent?.OnHit.AddListener(Alert);
     }
 
     protected void OnDisable()
     {
         agent?.OnHit.RemoveListener(CallForHeal);
+        agent?.OnHit.RemoveListener(Alert);
 
         if (assignedHealer)  assignedHealer.Target  = null;
         if (assignedSupport) assignedSupport.Target = null;
@@ -64,7 +66,12 @@ public class Unit : MonoBehaviour
         m_callForHeal = true;
     }
 
-    public virtual void SetSquad(UnitSquad squad) => m_Squad = squad;
+    private void Alert()
+    {
+        m_squad.ReceiveAlert(this);
+    }
+
+    public virtual void SetSquad(UnitSquad squad) => m_squad = squad;
 
     public virtual bool HasDuty() { return false; }
 

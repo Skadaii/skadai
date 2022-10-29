@@ -36,7 +36,7 @@ public class SupportUnit : Unit
                 if (m_target)
                 {
                     m_target.assignedSupport = this;
-                    m_targetAgressor = m_target.agent.agressor;
+                    m_targetAgressor = m_target.agent.Agressor;
                 }
             }
         }
@@ -69,13 +69,13 @@ public class SupportUnit : Unit
         if (m_target != null && m_target.gameObject.activeInHierarchy)
         {
 
-            bool targetIsBeingHurted = m_target.agent.agressor != null;
+            bool targetIsBeingHurted = m_target.agent.Agressor != null;
             bool isCurrentlyProtectingTarget = false;
 
-            if(agent.agressor != null)
+            if(agent.Agressor != null)
             {
-                Vector3 agressorToAgent  = Vector3.Normalize(agent.agressor.transform.position - transform.position);
-                Vector3 agressorToTarget = Vector3.Normalize(agent.agressor.transform.position - m_target.transform.position);
+                Vector3 agressorToAgent  = Vector3.Normalize(agent.Agressor.transform.position - transform.position);
+                Vector3 agressorToTarget = Vector3.Normalize(agent.Agressor.transform.position - m_target.transform.position);
 
                 isCurrentlyProtectingTarget = Vector3.Dot(agressorToTarget, agressorToAgent) >= 0.75f;
             }
