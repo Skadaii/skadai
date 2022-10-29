@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [CreateAssetMenu(fileName = "CircleFormation", menuName = "FormationRules/Circle", order = 2)]
 public class CircleFormation : FormationRule
@@ -31,9 +30,11 @@ public class CircleFormation : FormationRule
 
     override public Vector3 ComputePosition(Vector3 center, Quaternion rotation, int index)
     {
-        int lineIndex = Mathf.FloorToInt(index / unitsPerCircle);
+        float unitsCount = Math.Max(unitsPerCircle, 1);
 
-        float positionAngle = Mathf.PI * 2.0f / unitsPerCircle * index;
+        int lineIndex = Mathf.FloorToInt(index / unitsCount);
+
+        float positionAngle = Mathf.PI * 2.0f / unitsCount * index;
         float angleOffset = baseAngleOffset + lineAngleOffset * lineIndex;
         float finalAngle = positionAngle + angleOffset;
 
