@@ -77,7 +77,7 @@ public class AIAgent : Agent, IDamageable
         {
             ShootAt(m_target);
         }
-        else if (agressor != null)
+        else if (agressor != null && agressor.gameObject.activeInHierarchy)
         {
             ShootAt(agressor.gameObject);
         }
@@ -165,7 +165,7 @@ public class AIAgent : Agent, IDamageable
 
     public virtual float HasTarget()
     {
-        return System.Convert.ToSingle(m_target != null || agressor != null);
+        return System.Convert.ToSingle(m_target != null || (agressor != null && agressor.gameObject.activeInHierarchy));
     }
 
     #endregion

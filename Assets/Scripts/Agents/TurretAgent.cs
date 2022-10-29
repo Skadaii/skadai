@@ -11,7 +11,9 @@ public class TurretAgent : AIAgent
     {
         base.Awake();
 
+        m_explosionFX = Resources.Load("FXs/ParticleExplode") as GameObject;
         fireParticles = Resources.Load<GameObject>("FXs/ParticleFire");
+        HurtFX        = Resources.Load("FXs/ParticleTurretHurt") as GameObject;
     }
 
     private new void Update()

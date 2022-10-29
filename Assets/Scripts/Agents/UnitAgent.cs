@@ -21,6 +21,9 @@ public class UnitAgent : AIAgent
     {
         base.Awake();
 
+        m_explosionFX = Resources.Load("FXs/ParticleBloodExplode") as GameObject;
+        HurtFX        = Resources.Load("FXs/ParticleBlood") as GameObject;
+
         NavMeshAgentInst = GetComponent<NavMeshAgent>();
     }
 

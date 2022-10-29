@@ -28,7 +28,7 @@ public class SupportUnit : Unit
             if (m_target != null) m_target.assignedSupport = null;
 
             //  If the new target does not have an assigned support
-            if (value?.assignedSupport == null)
+            if (value == null || value.assignedSupport == null)
             {
                 m_target = value;
 

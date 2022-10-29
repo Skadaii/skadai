@@ -261,14 +261,14 @@ MonoBehaviour:
   m_shootFrequency: 0.5
   m_bulletPrefab: {fileID: 2180669255350586930, guid: 1539376290df9a54e8404edc666e8d53,
     type: 3}
-  m_bulletPower: 4000
+  m_bulletPower: 100
   m_bulletDamage: 10
   m_agentTeam: {fileID: 0}
   agressor: {fileID: 0}
   OnHit:
     m_PersistentCalls:
       m_Calls: []
-  rotationSpeed: 7.5
+  m_rotationSpeed: 10
 --- !u!195 &5565563887930918649
 NavMeshAgent:
   m_ObjectHideFlags: 0

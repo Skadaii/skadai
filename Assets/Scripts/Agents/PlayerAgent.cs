@@ -25,6 +25,9 @@ public class PlayerAgent : Agent
     {
         base.Awake();
 
+        m_explosionFX = Resources.Load("FXs/ParticleBloodExplode") as GameObject;
+        HurtFX        = Resources.Load("FXs/ParticleBlood") as GameObject;
+
         leader = GetComponent<UnitLeader>();
     }
 

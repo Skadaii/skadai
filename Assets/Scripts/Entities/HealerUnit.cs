@@ -15,9 +15,9 @@ public class HealerUnit : Unit
     private bool  m_canHeal = false;
     private float m_lastTimeHealing = 0f;
 
-    private Unit m_target;
+    [SerializeField] private Unit m_target;
 
-    private GameObject m_healFX;
+    private GameObject     m_healFX;
     private ParticleSystem m_healFParticles;
 
     #endregion
@@ -35,7 +35,7 @@ public class HealerUnit : Unit
             if (m_target != null) m_target.assignedHealer = null;
 
             //  If the new target does not have an assigned healer
-            if (value?.assignedHealer == null)
+            if (value == null || value.assignedHealer == null)
             {
                 m_target = value;
 
@@ -110,7 +110,7 @@ public class HealerUnit : Unit
     public void Heal()
     {
         Vector3 targetPos = m_target.transform.position;
-        Vector3 position = targetPos + Vector3.Normalize(transform.position - targetPos) * m_healingRadius;
+        Vector3 position  = targetPos + Vector3.Normalize(transform.position - targetPos) * m_healingRadius;
         movement.MoveTo(position);
 
         if (Vector3.SqrMagnitude(position - transform.position) <= m_healingRadius * m_healingRadius)

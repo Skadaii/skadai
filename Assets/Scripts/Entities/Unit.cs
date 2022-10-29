@@ -51,7 +51,7 @@ public class Unit : MonoBehaviour
     {
         agent?.OnHit.RemoveListener(CallForHeal);
 
-        if (assignedHealer) assignedHealer.Target   = null;
+        if (assignedHealer)  assignedHealer.Target  = null;
         if (assignedSupport) assignedSupport.Target = null;
     }
 

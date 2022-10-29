@@ -93,7 +93,7 @@ public class UnitSquad : MonoBehaviour
             if(target != leader)
             {
                 //  If the current healer already has a target, skip.
-                if (healer.Target != null) continue;
+                if (healer.Target != null && healer.TargetHealNeedFactor() > 0f) continue;
             }
 
             Vector3 healerPosition = healer.transform.position;

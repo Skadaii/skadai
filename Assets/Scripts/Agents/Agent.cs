@@ -15,7 +15,7 @@ public class Agent : MonoBehaviour, IDamageable
     [Header("Shoot & bullet parameters")]
     [SerializeField] protected float m_shootFrequency = 1f;
     [SerializeField] protected GameObject m_bulletPrefab;
-    [SerializeField] protected float m_bulletPower = 1000f;
+    [SerializeField] protected float m_bulletPower = 100f;
     [SerializeField] protected int   m_bulletDamage = 10;
 
     [Header("Team parameters")]
@@ -44,7 +44,7 @@ public class Agent : MonoBehaviour, IDamageable
 
     private float m_explosionShakeScale = 0.15f;
     private float m_explosionShakeDuration = 0.25f;
-    private GameObject m_explosionFX;
+    protected GameObject m_explosionFX;
 
     float m_considerBeingAttackedFor = 3f;
     float m_lastAttackedTime = 0f;
@@ -55,6 +55,8 @@ public class Agent : MonoBehaviour, IDamageable
     #region properties
 
     public CapsuleCollider DamageCollider { get; private set; }
+    public GameObject HurtFX { get; protected set; }
+
     public int CurrentHealth { get { return m_currentHealth; } }
 
     public ScriptableTeam AgentTeam
@@ -80,8 +82,6 @@ public class Agent : MonoBehaviour, IDamageable
     protected void Awake()
     {
         DamageCollider = GetComponent<CapsuleCollider>();
-
-        m_explosionFX = Resources.Load("FXs/ParticleExplode") as GameObject;
     
         //  Search for Renderer to get the material instance
 
@@ -137,13 +137,24 @@ public class Agent : MonoBehaviour, IDamageable
 
     #region Functions
 
-    public void AddDamage(int amount, Agent attacker)
+    public void AddDamage(int damage, Agent attacker, RaycastHit hit, bool playFX = false)
     {
         agressor = attacker;
 
         m_lastAttackedTime = Time.time;
 
-        m_currentHealth -= amount;
+        m_currentHealth -= damage;
+
+        if(playFX && HurtFX)
+        {
+            GameObject hitParticles = Instantiate(HurtFX, transform.parent);
+
+            hitParticles.transform.position = hit.point;
+            hitParticles.transform.forward = hit.normal;
+
+            Destroy(hitParticles, 2f);
+        }
+
         if (m_currentHealth <= 0)
         {
             m_currentHealth = 0;

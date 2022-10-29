@@ -7,14 +7,13 @@ public class Bullet : MonoBehaviour
     private GameObject m_hitFX;
     private Agent m_shooter = null;
 
-    private Rigidbody m_rigidBody;
-
     public float life = 2f;
     [SerializeField] private float m_impactShakeMaxRadius = 10f;
     [SerializeField] private float m_impactShakeScale = 0.1f;
 
     private MeshRenderer m_meshRenderer;
     private int m_damages = 10;
+    private Vector3 m_velocity;
 
     #endregion
 
@@ -24,7 +23,6 @@ public class Bullet : MonoBehaviour
     private void Awake()
     {
         m_hitFX = Resources.Load("FXs/ParticleHit") as GameObject;
-        m_rigidBody = GetComponent<Rigidbody>();
 
         m_meshRenderer = GetComponent<MeshRenderer>();
     }
@@ -34,22 +32,27 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject, life);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if(Physics.SphereCast(transform.position, transform.lossyScale.x * 0.5f, m_rigidBody.velocity.normalized, out RaycastHit hit, m_rigidBody.velocity.magnitude * Time.fixedDeltaTime, -1, QueryTriggerInteraction.Ignore))
+        if (Physics.SphereCast(transform.position, transform.lossyScale.x * 0.5f, m_velocity.normalized, out RaycastHit hit, m_velocity.magnitude * Time.fixedDeltaTime, -1, QueryTriggerInteraction.Ignore))
         {
-            if (hit.collider.gameObject.TryGetComponent(out Agent agent) && agent.AgentTeam == m_shooter.AgentTeam) return;
-
-            IDamageable damageable = hit.collider.gameObject.GetComponentInParent<IDamageable>();
-
-            if (damageable != null || hit.collider.gameObject.TryGetComponent(out damageable))
+            if (hit.collider.gameObject.TryGetComponent(out Agent agent) && agent.AgentTeam == m_shooter.AgentTeam) { }
+            else
             {
-                //  If the hitted collider is a damage collider then apply basic damage else apply reduced damages (for tanks)
-                damageable.AddDamage(damageable.DamageCollider == hit.collider ? m_damages : m_damages/2, m_shooter);
-            }
+                IDamageable damageable = hit.collider.gameObject.GetComponentInParent<IDamageable>();
 
-            OnHitEffects(hit);
+                if (damageable != null || hit.collider.gameObject.TryGetComponent(out damageable))
+                {
+                    //  If the hitted collider is a damage collider then apply basic damage else apply reduced damages (for tanks)
+                    bool dealHeavyDamage = damageable.DamageCollider == hit.collider;
+                    damageable.AddDamage(dealHeavyDamage ? m_damages : m_damages / 2, m_shooter, hit, dealHeavyDamage);
+                }
+
+                OnHitEffects(hit);
+                return;
+            }
         }
+        transform.position += m_velocity * Time.fixedDeltaTime;
     }
 
     #endregion
@@ -69,12 +72,10 @@ public class Bullet : MonoBehaviour
         GameObject hitParticles = Instantiate(m_hitFX, null);
 
         hitParticles.transform.position = hit.point;
-        hitParticles.transform.forward = hit.normal;
+        hitParticles.transform.forward  = hit.normal;
 
         m_meshRenderer.enabled = false;
         this.enabled      = false;
-
-        m_rigidBody.isKinematic = true;
 
         transform.position = hit.point;
         Destroy(gameObject, 2f);
@@ -83,9 +84,9 @@ public class Bullet : MonoBehaviour
 
     public void Shoot(Agent shooter, Vector3 direction, float force, int damages)
     {
-        m_shooter = shooter;
-        m_rigidBody.AddForce(direction * force);
-        m_damages = damages;
+        m_velocity = direction * force;
+        m_shooter  = shooter;
+        m_damages  = damages;
     }
 
     #endregion
