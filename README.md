@@ -47,10 +47,10 @@ Launch the exe directly from the archive.
 # Details
 
 ## Utility system
-To integrate artificial intelligence in the project, we have to make a decisional model which is the utility system
+To integrate artificial intelligence in the project, we have to make a decisional model which is the utility system.
 
 ### **Action Set**
-The utility system is composed of a list of actions stored in a scriptable object 
+The utility system is composed of a list of actions stored in a scriptable object.
 <div style="text-align:center">
 
 ![ActionSet](Annexes/ActionSet.gif)
@@ -58,7 +58,7 @@ The utility system is composed of a list of actions stored in a scriptable objec
 *Creation of an action list in the utility ai*
 </div>
 
-An action is composed of methods and a consideration
+An action is composed of methods and a consideration.
 
 ### **Consideration**
 Taking an action into account will be evaluated and will give a value between 0 and 1, this value is evaluated from an input and a curve.
@@ -75,8 +75,8 @@ And we will plot a curve against this input that will determine the utility (bet
 The utility system will evaluate all the considerations of the actions in order to derive the best action to perform. 
 
 ### **Methods**
-When an action is executed it will invoke all the methods of the action 
-The listed components are all the components attached to the Game Object where the utility system is and the listed methods are all the public methods of the component
+When an action is executed it will invoke all the methods of the action.
+The listed components are all the components attached to the Game Object where the utility system is and the listed methods are all the public methods of the component.
 <div style="text-align:center">
 
 ![Methods](Annexes/Methods.gif)
