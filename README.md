@@ -1,5 +1,10 @@
 # Skadaï: *Decision-making and movements in AI* - **Unity/C#**
-### ISART DIGITAL GP3, School Project: *Benjamin MARIN, Noé MOUCHEL, Rémi GINER*
+### ISART DIGITAL GP3, School Project: *Benjamin MARIN, Noé MOUCHEL, Rémi GINER*  
+
+<br>
+
+
+![CircleFormation](Annexes/TitleImage.png)
 
 <!-- ABOUT THE PROJECT -->
 # About The Project 
