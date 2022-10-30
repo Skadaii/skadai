@@ -133,7 +133,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 10
+  m_Radius: 15
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &6731161997449838567
 CapsuleCollider:
@@ -187,7 +187,6 @@ MonoBehaviour:
   m_bulletPower: 100
   m_bulletDamage: 10
   m_agentTeam: {fileID: 11400000, guid: 9f2c30124702156419c8f9e9f14cee08, type: 2}
-  agressor: {fileID: 0}
   OnHit:
     m_PersistentCalls:
       m_Calls: []

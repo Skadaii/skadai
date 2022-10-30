@@ -70,6 +70,12 @@ public class SupportUnit : Unit
         {
 
             bool targetIsBeingHurted = m_target.agent.Agressor != null;
+
+            if(targetIsBeingHurted)
+            {
+                m_targetAgressor = m_target.agent.Agressor;
+            }
+
             bool isCurrentlyProtectingTarget = false;
 
             if(agent.Agressor != null)

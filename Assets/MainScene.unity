@@ -7736,15 +7736,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitTypes:
-  - prefab: {fileID: 5565563887930918629, guid: adc8ff647a3e9974495d22554fae04dc,
-      type: 3}
-    count: 2
   - prefab: {fileID: 5565563887930918629, guid: 91fa7276aa35ae341bfed3c7b11a62f1,
       type: 3}
-    count: 2
+    count: 3
+  - prefab: {fileID: 5565563887930918629, guid: adc8ff647a3e9974495d22554fae04dc,
+      type: 3}
+    count: 3
   - prefab: {fileID: 5565563887930918629, guid: 6e89a9e53ee0d0940b0f1d78853f81fa,
       type: 3}
-    count: 2
+    count: 3
 --- !u!114 &1716431412
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -984,7 +984,6 @@ MonoBehaviour:
   m_bulletPower: 100
   m_bulletDamage: 10
   m_agentTeam: {fileID: 0}
-  agressor: {fileID: 0}
   OnHit:
     m_PersistentCalls:
       m_Calls: []
@@ -1201,7 +1200,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7119991700470710958}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

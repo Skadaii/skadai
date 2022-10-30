@@ -225,7 +225,7 @@ public class Agent : MonoBehaviour, IDamageable
     protected bool GunCheckObstacle()
     {
         Vector3 start = m_gunTransform.position - m_gunTransform.up * m_gunTransform.lossyScale.y;
-        Vector3 end = m_gunTransform.position + m_gunTransform.up * m_gunTransform.lossyScale.y;
+        Vector3 end   = m_gunTransform.position + m_gunTransform.up * m_gunTransform.lossyScale.y;
         Ray ray = new Ray(start, end - start);
 
         return Physics.SphereCast(ray, m_gunTransform.lossyScale.x * 0.5f, Vector3.Distance(start, end), ~(1 << gameObject.layer), QueryTriggerInteraction.Ignore);

@@ -15,6 +15,8 @@ public class Bullet : MonoBehaviour
     private int m_damages = 10;
     private Vector3 m_velocity;
 
+    private int m_ignoreMaskLayer; 
+
     #endregion
 
 
@@ -25,6 +27,8 @@ public class Bullet : MonoBehaviour
         m_hitFX = Resources.Load("FXs/ParticleHit") as GameObject;
 
         m_meshRenderer = GetComponent<MeshRenderer>();
+
+        m_ignoreMaskLayer = ~LayerMask.GetMask("Entity");
     }
 
     void Start()
@@ -34,7 +38,7 @@ public class Bullet : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Physics.SphereCast(transform.position, transform.lossyScale.x * 0.5f, m_velocity.normalized, out RaycastHit hit, m_velocity.magnitude * Time.fixedDeltaTime, -1, QueryTriggerInteraction.Ignore))
+        if (Raycast(out RaycastHit hit))
         {
             Agent agent = hit.collider.gameObject.GetComponentInParent<Agent>();
 
@@ -42,13 +46,19 @@ public class Bullet : MonoBehaviour
             {
                 if (agent.AgentTeam == m_shooter.AgentTeam)
                 {
-                    UpdatePos();
-                    return;
+                    //  Proceed with another check with layer mask of entities to avoid wall through passing
+                    if (!Raycast(out hit, m_ignoreMaskLayer))
+                    {
+                        UpdatePos();
+                        return;
+                    }
                 }
-
-                //  If the hitted collider is a damage collider then apply basic damage else apply reduced damages (for tanks)
-                bool dealHeavyDamage = agent.DamageCollider == hit.collider;
-                agent.AddDamage(dealHeavyDamage ? m_damages : m_damages / 2, m_shooter, hit, dealHeavyDamage);
+                else
+                {
+                    //  If the hitted collider is a damage collider then apply basic damage else apply reduced damages (for tanks)
+                    bool dealHeavyDamage = agent.DamageCollider == hit.collider;
+                    agent.AddDamage(dealHeavyDamage ? m_damages : m_damages / 2, m_shooter, hit, dealHeavyDamage);
+                }
             }
 
             OnHitEffects(hit);
@@ -62,6 +72,11 @@ public class Bullet : MonoBehaviour
 
 
     #region Functions
+
+    private bool Raycast(out RaycastHit hit, int layerMask = -1)
+    {
+        return Physics.SphereCast(transform.position, transform.lossyScale.x * 0.5f, m_velocity.normalized, out hit, m_velocity.magnitude * Time.fixedDeltaTime, layerMask, QueryTriggerInteraction.Ignore);
+    }
 
     private void UpdatePos()
     {

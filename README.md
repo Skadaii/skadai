@@ -75,6 +75,65 @@ To achieve a proper Squad system, we had to create an entity that represents a S
 </div>
 
 ## Gameplay integration
+We used the utility system to make specific AI action as healing, coverig or even shooting. We just had to make a consideration function then method(s) function(s),
+here an example of the healer utility system.
+ 
+
+<div style="text-align:center">
+
+![HealerUtilitySystem](Annexes/HealerutilitySystem.png)  
+
+*Healer utility system*
+</div>
+
+The healer has two actions, shoot at target and heal, shoot at target consideration has lower maximum value, the healing consideration can return a higher value so **the healer will in priority heal hurted teammates instead of figthing enemies**.
+
+<div style="text-align:center">
+
+![HealerUtilitySystem](Annexes/HealerTargetConsideration.png)  
+
+*Healer target consideration*
+</div>
+
+<div style="text-align:center">
+
+![HealerUtilitySystem](Annexes/HealerHealConsideration.png)  
+
+*Healer healing consideration*
+</div>
+
+Our system is not limited to only help the player, AI can help each others, a healer can heal anyone but himself, and supports can cover everyone but not supports. The player stays in priority when the unit choose who to help. The targeting choice is managed in the file *[Assets/Scripts/Units/UnitSquad.cs](./Assets/Scripts/Units/UnitSquad.cs#L80)*.  
+
+
+<br>
+<div style="text-align:center">
+
+![HealerUtilitySystem](Annexes/HealerHealing.gif)  
+*Healer healing - [Assets/Scripts/Units/HealerUnit.cs](./Assets/Scripts/Units/HealerUnit.cs)*
+</div>
+
+<br><br>
+
+
+In the *support* action, for support units, we use a double method, the shootAtTarget and the cover methods are called so support can cover and shoot at the same time.
+
+<div style="text-align:center">
+
+![HealerUtilitySystem](Annexes/SupportCoverAction.png)  
+*Support action*
+</div>
+
+<div style="text-align:center">
+
+![HealerUtilitySystem](Annexes/SupportCovering.gif)  
+*Support covering - [Assets/Scripts/Units/SupportUnit.cs](./Assets/Scripts/Units/SupportUnit.cs)*
+</div>
+
+<br>
+
+You can also find in *[Assets/Scripts/Agents/AIAgent.cs](./Assets/Scripts/Agents/AIAgent.cs#L80)*, the consideration and method for the shooting behaviour of the units and turrets.
+
+<br>
 
 
 ## References:

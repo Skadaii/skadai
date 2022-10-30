@@ -130,7 +130,7 @@ public class UnitSquad : MonoBehaviour
 
             SupportUnit support = unit as SupportUnit;
 
-            if (support == null) continue;
+            if (support == null || support.Target == leader) continue;
 
             Vector3 coverPosition = support.GetCoverPosition(target.transform.position, target.agent.Agressor.transform.position);
 

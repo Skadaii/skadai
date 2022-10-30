@@ -46,6 +46,7 @@ public class GameInstance : MonoBehaviour
 
     public void GameOver()
     {
+        Time.timeScale = 0f;
         m_menu.Open(UI_Menu.MenuContent.GameOver);
     }
 
