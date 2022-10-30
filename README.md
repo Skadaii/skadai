@@ -1,14 +1,12 @@
 # Skadaï: *Decision-making and movements in AI* - **Unity/C#**
 ### ISART DIGITAL GP3, School Project: *Benjamin MARIN, Noé MOUCHEL, Rémi GINER*  
 
-<br>
-
-
 ![CircleFormation](Annexes/TitleImage.png)
 
 <!-- ABOUT THE PROJECT -->
 # About The Project 
-**Built with Unity 2021.3.5f1**
+[![Unity](https://img.shields.io/badge/dynamic/yaml?url=https://raw.githubusercontent.com/skadaii/skadai/master/ProjectSettings/ProjectVersion.txt&query=m_EditorVersion&logo=unity&label=Unity&color=grey)](https://unity.com)
+[![Gitlab](https://img.shields.io/badge/GitLab-292961?&logo=gitlab)](https://gitlab.com)
 
 The goal of the project is to make an NPC AI that moves as a squad and can interact with the player, in a real-time action game.
 
@@ -47,10 +45,10 @@ Launch the exe directly from the archive.
 # Details
 
 ## Utility system
-To integrate artificial intelligence in the project, we have to make a decisional model which is the utility system
+To integrate artificial intelligence in the project, we have to make a decisional model which is the utility system.
 
 ### **Action Set**
-The utility system is composed of a list of actions stored in a scriptable object 
+The utility system is composed of a list of actions stored in a scriptable object.
 <div style="text-align:center">
 
 ![ActionSet](Annexes/ActionSet.gif)
@@ -58,7 +56,7 @@ The utility system is composed of a list of actions stored in a scriptable objec
 *Creation of an action list in the utility ai*
 </div>
 
-An action is composed of methods and a consideration
+An action is composed of methods and a consideration.
 
 ### **Consideration**
 Taking an action into account will be evaluated and will give a value between 0 and 1, this value is evaluated from an input and a curve.
@@ -75,8 +73,8 @@ And we will plot a curve against this input that will determine the utility (bet
 The utility system will evaluate all the considerations of the actions in order to derive the best action to perform. 
 
 ### **Methods**
-When an action is executed it will invoke all the methods of the action 
-The listed components are all the components attached to the Game Object where the utility system is and the listed methods are all the public methods of the component
+When an action is executed it will invoke all the methods of the action.
+The listed components are all the components attached to the Game Object where the utility system is and the listed methods are all the public methods of the component.
 <div style="text-align:center">
 
 ![Methods](Annexes/Methods.gif)
@@ -198,9 +196,9 @@ You can also find in *[Assets/Scripts/Agents/AIAgent.cs](./Assets/Scripts/Agents
 
 
 ## Versionning
-Git Lab for the versioning.
+Git Lab was used for the versioning during of the development of this project.
 
 # Authors
-* **Noé MOUCHEL**
-* **Benjamin MARIN**
-* **Rémi GINER**
+* **Noé MOUCHEL** [![Github](https://img.shields.io/badge/NoeMouchel-grey?logo=github)](https://github.com/NoeMouchel) [![itch.io](https://img.shields.io/badge/noe--mouchel-%23FF0B34?logo=itch.io&logoColor=white)](https://noe-mouchel.itch.io)
+* **Benjamin MARIN** [![Github](https://img.shields.io/badge/Bijima-grey?logo=github)](https://github.com/Bijima) [![itch.io](https://img.shields.io/badge/bijima-%23FF0B34?logo=itch.io&logoColor=white)](https://bijima.itch.io)
+* **Rémi GINER** [![Github](https://img.shields.io/badge/remisansfamine-grey?logo=github)](https://github.com/remisansfamine) [![itch.io](https://img.shields.io/badge/remisansfamine-%23FF0B34?logo=itch.io&logoColor=white)](https://remisansfamine.itch.io)
