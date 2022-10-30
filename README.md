@@ -12,6 +12,20 @@
 
 The goal of the project is to make an NPC AI that moves as a squad and can interact with the player, in a real-time action game.
 
+# Table of contents
+1. [Features & usage](#features--usage)
+    - [Features](#features)
+    - [Controls](#controls)
+3. [How to launch](#how-to-launch)
+5. [Details](#details)
+    - [Utility System](#utility-system)
+    - [Squad System](#squad-system)
+    - [Gameplay Integration](#gameplay-integration)
+5. [Reference](#references)
+6. [Versionning](#versionning)
+6. [Autors](#authors)
+
+
 # Features & usage
 
 ## Features
@@ -33,6 +47,44 @@ Launch the exe directly from the archive.
 # Details
 
 ## Utility system
+To integrate artificial intelligence in the project, we have to make a decisional model which is the utility system
+
+### **Action Set**
+The utility system is composed of a list of actions stored in a scriptable object 
+<div style="text-align:center">
+
+![ActionSet](Annexes/ActionSet.gif)
+
+*Creation of an action list in the utility ai*
+</div>
+
+An action is composed of methods and a consideration
+
+### **Consideration**
+Taking an action into account will be evaluated and will give a value between 0 and 1, this value is evaluated from an input and a curve.
+The input is a method that will return a value, for example, the distance of the player from an enemy.
+And we will plot a curve against this input that will determine the utility (between 0 and 1) that will be returned by the consideration evaluation.
+
+<div style="text-align:center">
+
+![Consideration](Annexes/Consideration.png)
+
+*Exemple of consideration*
+</div>
+
+The utility system will evaluate all the considerations of the actions in order to derive the best action to perform. 
+
+### **Methods**
+When an action is executed it will invoke all the methods of the action 
+The listed components are all the components attached to the Game Object where the utility system is and the listed methods are all the public methods of the component
+<div style="text-align:center">
+
+![Methods](Annexes/Methods.gif)
+
+*Creation of a method in an action*
+</div>
+
+To facilitate the integration of the actions in the utility system we decided to make a custom inspector, for example thanks to this we can list the methods available in the components.
 
 ## Squad system
 

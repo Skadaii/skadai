@@ -459,6 +459,7 @@ public class UtilityAI_Editor : Editor
         Component[] components = Target.GetComponents(typeof(Component));
 
         ComponentsName.Clear();
+        MethodsName.Clear();
 
         if (components.Length != 0)
         {
